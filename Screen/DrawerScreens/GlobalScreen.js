@@ -246,12 +246,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   postText: {
-    fontSize: "12",
+    fontSize: 12,
     fontWeight: "400",
     color: "#333333",
   },
   postDate: {
-    fontSize: "12",
+    fontSize: 12,
     fontWeight: "400",
     color: "#777777",
   },

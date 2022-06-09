@@ -17,6 +17,7 @@ import {
 } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import Loader from "./Components/Loader";
 
@@ -79,7 +80,10 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.mainBody}>
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.mainBody}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+    >
       <View
         style={{
           alignItems: "center",
@@ -143,14 +147,14 @@ const SignUpScreen = ({ navigation }) => {
         </View>
       </View>
       <View style={styles.belowCardArea}>
-        <Text style={styles.belowCardText}> Already have an account ? </Text>
-        <TouchableOpacity>
-          <Text style={{ fontWeight: "400", paddingTop: "3.5%" }}>
-            Click Here To Login
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.belowCardAreaView}>
+          <Text style={styles.belowCardText}> Already have an account ? </Text>
+          <TouchableOpacity>
+            <Text style={{ fontWeight: "400" }}>Click Here To Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 export default SignUpScreen;
@@ -184,7 +188,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     color: "#787878",
-    marginTop: 15,
   },
   belowCardArea: {
     flex: 0.2,
@@ -273,5 +276,13 @@ const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
     fontSize: 14,
+  },
+
+  belowCardAreaView: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    top: "30%",
   },
 });

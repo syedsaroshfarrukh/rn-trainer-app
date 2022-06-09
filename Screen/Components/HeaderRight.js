@@ -6,18 +6,16 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 const HeaderLeft = ({ image, height, width, margin }) => {
   return (
-    <TouchableOpacity>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "center",
-          marginRight: margin,
-        }}
-      >
-        <SvgUri source={image} height={height} width={width} />
-      </View>
-    </TouchableOpacity>
+    <View
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        marginRight: margin,
+      }}
+    >
+      <SvgUri source={image} height={height} width={width} />
+    </View>
   );
 };
 

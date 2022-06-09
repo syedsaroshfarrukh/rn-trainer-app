@@ -67,11 +67,11 @@ const GroupsScreen = () => {
               </TouchableOpacity>
             </View>
             <View style={styles.cardRowFour}>
-              <TouchableOpacity style={styles.buttonFive}>
-                <Text
-                  style={{ fontSize: 12, fontWeight: "400" }}
-                  onPress={() => setModalVisible(true)}
-                >
+              <TouchableOpacity
+                style={styles.buttonFive}
+                onPress={() => setModalVisible(true)}
+              >
+                <Text style={{ fontSize: 12, fontWeight: "400" }}>
                   Settings
                 </Text>
               </TouchableOpacity>
@@ -318,7 +318,6 @@ const GroupsScreen = () => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
         }}
       >

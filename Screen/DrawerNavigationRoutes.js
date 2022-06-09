@@ -19,7 +19,6 @@ import CustomSidebarMenu from "./Components/CustomSidebarMenu";
 import NavigationDrawerHeader from "./Components/NavigationDrawerHeader";
 import NavigationHeaderClientRight from "./Components/NavigationHeaderClientRight";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { RotateInDownLeft } from "react-native-reanimated";
 import AddClient from "./DrawerScreens/AddClient";
 
 const Stack = createStackNavigator();
@@ -271,16 +270,14 @@ const SettingScreenStack = ({ navigation }) => {
 const DrawerNavigatorRoutes = (props) => {
   return (
     <Drawer.Navigator
-      // drawerConscreenOptionstentOptions={{
-      //   activeTintColor: "#cee1f2",
-      //   color: "#cee1f2",
-      //   itemStyle: { marginVertical: 5, color: "white" },
-      //   labelStyle: {
-      //     color: "#d8d8d8",
-      //   },
-      // }}
-      screenOptions={{ headerShown: false }}
       drawerContent={CustomSidebarMenu}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: "#c6cbef",
+          width: width * 0.7,
+        },
+      }}
     >
       <Drawer.Screen
         name="homeScreenStack"

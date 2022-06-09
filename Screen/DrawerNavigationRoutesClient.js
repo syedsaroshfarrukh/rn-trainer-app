@@ -20,7 +20,6 @@ import CustomSidebarMenu from "./Components/CustomSidebarMenuClient";
 import NavigationDrawerHeader from "./Components/NavigationDrawerHeader";
 import NavigationHeaderClientRight from "./Components/NavigationHeaderClient";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { RotateInDownLeft } from "react-native-reanimated";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();

@@ -2,24 +2,24 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, { useState, createRef, useEffect } from "react";
+import React, { useState, createRef, useEffect, useRef } from "react";
 import {
   StyleSheet,
   TextInput,
   View,
   Text,
-  ScrollView,
   Image,
-  Keyboard,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
-
+import { Formik } from "formik";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import loginervices from "../services/loginService";
 import Loader from "./Components/Loader";
-import { color } from "react-native-reanimated";
+import DropdownAlert from "react-native-dropdownalert";
+import loginValidationSchema from "../validations/loginValidationsSchema";
 
 const LoginScreen = ({ navigation }) => {
   const [toggle, setToggle] = useState(true);
@@ -31,6 +31,11 @@ const LoginScreen = ({ navigation }) => {
   const [errortext, setErrortext] = useState("");
 
   const passwordInputRef = createRef();
+  let dropDownAlertRef = useRef();
+
+  function trainerNavigationFunction() {
+    navigation.replace("DrawerNavigationRoutes");
+  }
 
   const handleSubmitPress = () => {
     setErrortext("");
@@ -69,7 +74,6 @@ const LoginScreen = ({ navigation }) => {
         if (responseJson.status === "success") {
           AsyncStorage.setItem("user_id", responseJson.data.email);
           console.log(responseJson.data.email);
-          navigation.replace("DrawerNavigationRoutes");
         } else {
           setErrortext(responseJson.msg);
           console.log("Please check your email id or password");
@@ -83,7 +87,11 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.mainBody}>
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.mainBody}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+    >
+      <Loader loading={loading} />
       <View
         style={{
           alignItems: "center",
@@ -97,131 +105,220 @@ const LoginScreen = ({ navigation }) => {
           style={{ height: "45%", width: "45%", top: 10 }}
         />
       </View>
-      <View style={styles.cardBody}>
-        <View
-          style={{
-            flex: 0.22,
-            flexDirection: "row",
-            justifyContent: "space-around",
-            borderTopLeftRadius: 50,
-            borderTopRightRadius: 50,
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              setToggle(true);
-              setToggle1(false);
-            }}
-            style={{
-              flexDirection: "column",
-              backgroundColor: toggle ? "#42B825" : "transparent",
-              height: "100%",
-              width: "50%",
-              alignItems: "center",
-              justifyContent: "center",
-              borderTopLeftRadius: 50,
-            }}
-          >
-            <View>
-              <Text
+      <Formik
+        initialValues={{
+          email: "",
+          password: "",
+        }}
+        onSubmit={(values) => {
+          setLoading(true);
+          loginervices
+            .login({
+              email: values.email,
+              password: values.password,
+            })
+            .then((res) => {
+              // setIsLoading(false);
+              // dropDownAlertRef.alertWithType(
+              //   "success",
+              //   "User Registered Successfully"
+              // );
+              let userObject = {
+                role: res.data.success.role[0],
+                firstName: res.data.success.user.first_name,
+                lastName: res.data.success.user.last_name,
+                email: res.data.success.user.email,
+                token: res.data.success.token,
+              };
+              dropDownAlertRef.alertWithType("success", "Login Successfull");
+              AsyncStorage.setItem("user", JSON.stringify(userObject));
+              setTimeout(trainerNavigationFunction, 1000);
+
+              setLoading(false);
+            })
+            .catch((error) => {
+              // setIsLoading(false); // For hiding loader
+              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+              console.log(error);
+              dropDownAlertRef.alertWithType(
+                "error",
+                "Invalid Email or Password"
+              );
+              setLoading(false);
+            });
+        }}
+        validationSchema={loginValidationSchema}
+      >
+        {({
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          values,
+          errors,
+          isValid,
+        }) => (
+          <View style={styles.cardBody}>
+            <View
+              style={{
+                flex: 0.22,
+                flexDirection: "row",
+                justifyContent: "space-around",
+                borderTopLeftRadius: 50,
+                borderTopRightRadius: 50,
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  setToggle(true);
+                  setToggle1(false);
+                }}
                 style={{
-                  ...styles.SignInButtons,
-                  color: toggle ? "#FFFFFF" : "#000000",
+                  flexDirection: "column",
+                  backgroundColor: toggle ? "#42B825" : "transparent",
+                  height: "100%",
+                  width: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderTopLeftRadius: 50,
                 }}
               >
-                Login As Client
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setToggle(false);
-              setToggle1(true);
-            }}
-            style={{
-              flexDirection: "column",
-              backgroundColor: toggle1 ? "#42B825" : "transparent",
-
-              height: "100%",
-              width: "50%",
-              alignItems: "center",
-              justifyContent: "center",
-              borderTopRightRadius: 50,
-            }}
-          >
-            <View>
-              <Text
+                <View>
+                  <Text
+                    style={{
+                      ...styles.SignInButtons,
+                      color: toggle ? "#FFFFFF" : "#000000",
+                    }}
+                  >
+                    Login As Client
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setToggle(false);
+                  setToggle1(true);
+                }}
                 style={{
-                  ...styles.SignInButtons,
-                  color: toggle1 ? "#FFFFFF" : "#000000",
+                  flexDirection: "column",
+                  backgroundColor: toggle1 ? "#42B825" : "transparent",
+
+                  height: "100%",
+                  width: "50%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderTopRightRadius: 50,
                 }}
               >
-                Login As Trainer
-              </Text>
+                <View>
+                  <Text
+                    style={{
+                      ...styles.SignInButtons,
+                      color: toggle1 ? "#FFFFFF" : "#000000",
+                    }}
+                  >
+                    Login As Trainer
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.textCardBodyHeader}>Welcome Back</Text>
-        <View style={{ flex: 1 }}>
-          <TextInput
-            style={styles.inputStyle}
-            underlineColorAndroid="#f000"
-            placeholder="Email"
-            placeholderTextColor="#8b9cb5"
-            autoCapitalize="sentences"
-            returnKeyType="next"
-            // // onSubmitEditing={() =>
-            // //   emailInputRef.current && emailInputRef.current.focus()
-            // // }
-            // blurOnSubmit={false}
-          />
+            <Text style={styles.textCardBodyHeader}>Welcome Back</Text>
+            <View style={{ flex: 1 }}>
+              <TextInput
+                style={styles.inputStyle}
+                underlineColorAndroid="#f000"
+                placeholder="Email"
+                placeholderTextColor="#8b9cb5"
+                autoCapitalize="none"
+                returnKeyType="next"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+              />
 
-          <TextInput
-            style={styles.inputStyle}
-            underlineColorAndroid="#f000"
-            placeholder="Password"
-            placeholderTextColor="#8b9cb5"
-            autoCapitalize="sentences"
-            returnKeyType="next"
-            secureTextEntry={true}
-            // // onSubmitEditing={() =>
-            // //   emailInputRef.current && emailInputRef.current.focus()
-            // // }
-            // blurOnSubmit={false}
-          />
-          <TouchableOpacity style={styles.touchableOpacity}>
-            <Text style={{ color: "#053CFF" }}>Forgot Password ?</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            activeOpacity={0.5}
-            onPress={() => {
-              if (toggle) {
-                navigation.navigate("PricingAuth");
-              }
-              if (toggle1) {
-                navigation.replace("DrawerNavigationRoutes");
-              }
-            }}
-          >
-            <Text style={styles.buttonTextStyle}>{`${
-              toggle ? "Sign In As Client" : "Sign In As Trainer"
-            }`}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+              {errors.email && (
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "red",
+                    marginLeft: "8%",
+                    marginTop: "-2%",
+                  }}
+                >
+                  {errors.email}
+                </Text>
+              )}
+
+              <TextInput
+                style={styles.inputStyle}
+                underlineColorAndroid="#f000"
+                placeholder="Password"
+                placeholderTextColor="#8b9cb5"
+                autoCapitalize="none"
+                returnKeyType="next"
+                secureTextEntry={true}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+              />
+
+              {errors.password && (
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "red",
+                    marginLeft: "8%",
+                    marginTop: "-2%",
+                    marginBottom: "2%",
+                  }}
+                >
+                  {errors.password}
+                </Text>
+              )}
+
+              <TouchableOpacity style={styles.touchableOpacity}>
+                <Text style={{ color: "#053CFF" }}>Forgot Password ?</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                activeOpacity={0.5}
+                onPress={handleSubmit}
+              >
+                <Text style={styles.buttonTextStyle}>{`${
+                  toggle ? "Sign In As Client" : "Sign In As Trainer"
+                }`}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+      </Formik>
       <View style={styles.belowCardArea}>
-        <Text style={styles.belowCardText}> Don't have an account? </Text>
-        <TouchableOpacity>
-          <Text
-            style={{ fontWeight: "400", paddingTop: "3.5%", color: "#053CFF" }}
-          >
-            Click Here To Sign Up
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.belowCardAreaView}>
+          <Text style={styles.belowCardText}> Don't have an account? </Text>
+          <TouchableOpacity>
+            <Text
+              style={{
+                fontWeight: "400",
+                color: "#053CFF",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              Click Here To Sign Up
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+      <DropdownAlert
+        updateStatusBar={false}
+        defaultContainer={{ padding: 15, paddingTop: 45 }}
+        ref={(ref) => {
+          if (ref) {
+            dropDownAlertRef = ref;
+          }
+        }}
+      />
+    </KeyboardAwareScrollView>
   );
 };
 export default LoginScreen;
@@ -255,7 +352,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
     color: "#787878",
-    marginTop: 15,
   },
   belowCardArea: {
     flex: 0.2,
@@ -266,12 +362,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  belowCardAreaView: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    top: "30%",
+  },
   textCardBodyHeader: {
     fontSize: 20,
     fontWeight: "600",
     textAlign: "center",
     marginTop: 40,
-    marginBottom: 40,
+    marginBottom: "5%",
   },
   SignInButtons: {
     fontSize: 18,
@@ -303,6 +406,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "500",
   },
+
   buttonStyle: {
     backgroundColor: "#41B825",
     borderWidth: 0,
@@ -310,11 +414,12 @@ const styles = StyleSheet.create({
     borderColor: "#7DE24E",
     height: 53,
     alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
     marginLeft: 39,
     marginRight: 39,
     marginBottom: 25,
-    marginTop: 20,
+    marginTop: "3%",
   },
   touchableOpacity: {
     marginLeft: 39,
@@ -323,7 +428,7 @@ const styles = StyleSheet.create({
   },
   buttonTextStyle: {
     color: "#FFFFFF",
-    paddingVertical: 14,
+    alignItems: "center",
     fontSize: 20,
     fontWeight: "500",
   },

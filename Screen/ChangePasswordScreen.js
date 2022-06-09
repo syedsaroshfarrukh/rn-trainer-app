@@ -10,56 +10,110 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
-import React from "react";
-import SvgUri from "expo-svg-uri";
-import { LinearGradient } from "expo-linear-gradient";
-import { deg } from "react-native-linear-gradient-degree";
+import React, { useState, useRef, useEffect } from "react";
+import { Formik } from "formik";
+import Loader from "./Components/Loader";
+import DropdownAlert from "react-native-dropdownalert";
+import changePasswordValidation from "../validations/changePasswordValidations";
 
 const { width, height } = Dimensions.get("window");
 
 const ChangePasswordScreen = () => {
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#FFFFFF",
+    <Formik
+      enableReinitialize={true}
+      initialValues={{
+        password: "",
+        confirmPassword: "",
       }}
+      onSubmit={(values) => {
+        console.log("user", user);
+        // console.log(values);
+        // setLoading(true);
+        // loginService
+        //   .updateTrainerProfile({
+        //     first_name: values.firstName,
+        //     last_name: values.lastName,
+        //     email: values.email,
+        //     phone: values.phoneNo,
+        //   })
+        //   .then((res) => {
+        //     console.log("response", res.data);
+        //     dropDownAlertRef.alertWithType("success", "Profile Updated");
+        //     setLoading(false);
+        //   })
+        //   .catch((error) => {
+        //     console.log(error);
+        //     dropDownAlertRef.alertWithType(
+        //       "error",
+        //       "Invalid Email or Password"
+        //     );
+        //     setLoading(false);
+        //   });
+      }}
+      validationSchema={changePasswordValidation}
     >
-      <View style={{ flex: 1, padding: 16 }}>
-        <View style={styles.container}>
-          <View style={styles.firstRow}>
-            <Image
-              source={require("../Image/logo-small.png")}
-              style={{ height: 188, width: 188, top: 10 }}
-            />
-          </View>
-          <View style={styles.secondRow}>
-            <TextInput
-              style={styles.inputStyle}
-              underlineColorAndroid="#f000"
-              placeholder="Old Password"
-              placeholderTextColor="#8b9cb5"
-              autoCapitalize="sentences"
-              returnKeyType="next"
-            />
-            <TextInput
-              style={styles.inputStyle}
-              underlineColorAndroid="#f000"
-              placeholder="New Password"
-              placeholderTextColor="#8b9cb5"
-              autoCapitalize="sentences"
-              returnKeyType="next"
-            />
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        isValid,
+      }) => (
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "#FFFFFF",
+          }}
+        >
+          <View style={{ flex: 1, padding: 16 }}>
+            <View style={styles.container}>
+              <View style={styles.firstRow}>
+                <Image
+                  source={require("../Image/logo-small.png")}
+                  style={{ height: 188, width: 188, top: 10 }}
+                />
+              </View>
+              <View style={styles.secondRow}>
+                <TextInput
+                  style={styles.inputStyle}
+                  underlineColorAndroid="#f000"
+                  placeholder="Enter Password"
+                  placeholderTextColor="#8b9cb5"
+                  autoCapitalize="none"
+                  returnKeyType="next"
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                  value={values.password}
+                />
+                <TextInput
+                  style={styles.inputStyle}
+                  underlineColorAndroid="#f000"
+                  placeholder="Confirm Password"
+                  placeholderTextColor="#8b9cb5"
+                  autoCapitalize="none"
+                  returnKeyType="next"
+                  onChangeText={handleChange("confirm password")}
+                  onBlur={handleBlur("password")}
+                  value={values.password}
+                />
 
-            <View style={{ flex: 1, alignItems: "center", marginTop: "2%" }}>
-              <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonTextStyle}>Save</Text>
-              </TouchableOpacity>
+                <View
+                  style={{ flex: 1, alignItems: "center", marginTop: "2%" }}
+                >
+                  <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonTextStyle} onPress={handleSubmit}>
+                      Save
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </View>
         </View>
-      </View>
-    </View>
+      )}
+    </Formik>
   );
 };
 

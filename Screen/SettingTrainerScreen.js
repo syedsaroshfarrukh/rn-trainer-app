@@ -6,16 +6,29 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { deg } from "react-native-linear-gradient-degree";
 import SvgUri from "expo-svg-uri";
 import { TouchableOpacity } from "react-native-gesture-handler";
 const { width, height } = Dimensions.get("window");
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingTrainerScreen = () => {
   const navigation = useNavigation();
+  const [userInfo, setUserInfo] = useState("");
+
+  useEffect(() => {
+    async function AsyncStorageDataLoad() {
+      let user = await AsyncStorage.getItem("user");
+      let parsed = JSON.parse(user);
+      setUserInfo(parsed);
+      console.log(parsed);
+    }
+
+    AsyncStorageDataLoad();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -24,8 +37,10 @@ const SettingTrainerScreen = () => {
           source={require("../Image/BoyProfile.png")}
           style={{ height: 101, width: 101 }}
         />
-        <Text style={styles.name}>Kate Smith</Text>
-        <Text style={styles.email}>Kate.smith@tech.com</Text>
+        <Text style={styles.name}>
+          {userInfo.firstName} {userInfo.lastName}
+        </Text>
+        <Text style={styles.email}>{userInfo.email}</Text>
       </View>
       <View style={styles.secondRow}>
         <TouchableOpacity onPress={() => navigation.navigate("EditProfile")}>

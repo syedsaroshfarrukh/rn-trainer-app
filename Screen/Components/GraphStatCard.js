@@ -17,26 +17,18 @@ const AssesmentsScreen = ({ imageUrl, title, stats, route }) => {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(route)}>
-      <LinearGradient
-        colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
-        {...deg(140)}
-        style={styles.card}
-      >
-        <View style={styles.colOne}>
-          <SvgUri source={imageUrl} />
-          <Text style={{ marginLeft: "10%", fontWeight: "400" }}>{title}</Text>
-        </View>
-        <View style={styles.colTwo}>
-          <Text style={{ marginRight: "12%", color: "#989898" }}>{stats}</Text>
-          <SvgUri
-            source={require("../../Image/arrow.svg")}
-            height="16"
-            width="10"
-          />
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
+    <LinearGradient
+      colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
+      {...deg(140)}
+      style={styles.card}
+    >
+      <View style={styles.colOne}>
+        <Text style={{ fontWeight: "400" }}>{title}</Text>
+      </View>
+      <View style={styles.colTwo}>
+        <Text style={{ color: "#989898" }}>{stats}</Text>
+      </View>
+    </LinearGradient>
   );
 };
 
@@ -51,7 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     width: width * 0.85,
-    height: width * 0.105,
+    height: width * 0.12,
     borderRadius: 11,
     borderColor: "#CBCBCB",
     borderWidth: 1,
@@ -59,8 +51,8 @@ const styles = StyleSheet.create({
   colOne: {
     flex: 1,
     flexDirection: "row",
-    marginLeft: "7%",
     alignItems: "center",
+    marginLeft: "7%",
   },
   colTwo: {
     flex: 1,

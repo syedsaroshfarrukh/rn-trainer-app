@@ -18,11 +18,11 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-function NutritionPlanTemplate({ title, description }) {
+function NutritionPlanTemplate({ title, description, route }) {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => navigation.navigate(route)}>
       <LinearGradient
         colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
         {...deg(140)}

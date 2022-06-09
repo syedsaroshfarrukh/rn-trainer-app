@@ -1,8 +1,11 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import NutritionPlanTemplate from "./Components/NutritionPlanTemplate";
+import AddModal from "./Components/AddModal";
 
 const PlanTemplatesScreen = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <View style={styles.container}>
       <View style={styles.firstRow}>
@@ -10,7 +13,7 @@ const PlanTemplatesScreen = () => {
         <NutritionPlanTemplate title={"Smghti"} description={"2 week plan"} />
       </View>
       <View style={styles.secondRow}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => setOpen(true)}>
           <View
             style={{
               flexDirection: "row",
@@ -23,6 +26,12 @@ const PlanTemplatesScreen = () => {
           </View>
         </TouchableOpacity>
       </View>
+      <AddModal
+        title="Create New Week Plan !"
+        placeholder="Name"
+        open={open}
+        onClose={() => setOpen(false)}
+      />
     </View>
   );
 };

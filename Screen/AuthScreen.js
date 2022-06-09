@@ -2,7 +2,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, useEffect } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -27,6 +27,18 @@ const LoginScreen = ({ navigation }) => {
   const [errortext, setErrortext] = useState("");
 
   const passwordInputRef = createRef();
+
+  const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    async function AsyncStorageDataLoad() {
+      let user = await AsyncStorage.getItem("user_id");
+      setTitle(user);
+      console.log(user);
+    }
+
+    AsyncStorageDataLoad();
+  }, []);
 
   const handleSubmitPress = () => {
     setErrortext("");

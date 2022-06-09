@@ -10,7 +10,7 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SvgUri from "expo-svg-uri";
 import { LinearGradient } from "expo-linear-gradient";
 import { deg } from "react-native-linear-gradient-degree";
@@ -27,7 +27,7 @@ const AddClient = () => {
     >
       <View style={{ flex: 1, padding: 16 }}>
         <View style={styles.topTextView}>
-          <Text style={styles.topTextStyle}>Add Clients</Text>
+          <Text style={styles.topTextStyle}>Add Client</Text>
         </View>
         <View style={styles.container}>
           <View style={styles.firstRow}>
@@ -44,6 +44,7 @@ const AddClient = () => {
               placeholderTextColor="#8b9cb5"
               autoCapitalize="sentences"
               returnKeyType="next"
+              onChangeText={(text) => console.log(text)}
             />
             <TextInput
               style={styles.inputStyle}

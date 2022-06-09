@@ -1,16 +1,19 @@
 import {
   StyleSheet,
-  Text,
   View,
   SafeAreaView,
   ScrollView,
   Image,
+  TouchableOpacity,
 } from "react-native";
-import React from "react";
+
+import React, { useState } from "react";
+
 import WorkoutTemplateCard from "./Components/WorkoutTemplateCard";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import AddModal from "./Components/AddModal";
 
 const WorkoutTemplateScreen = () => {
+  const [open, setOpen] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.rowOne}>
@@ -43,13 +46,19 @@ const WorkoutTemplateScreen = () => {
         </ScrollView>
       </View>
       <View style={styles.rowTwo}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => setOpen(true)}>
           <Image
             source={require("../Image/add-workout-button.png")}
             style={styles.image}
           />
         </TouchableOpacity>
       </View>
+      <AddModal
+        title="New Workout Template"
+        placeholder="Name"
+        open={open}
+        onClose={() => setOpen(false)}
+      />
     </SafeAreaView>
   );
 };

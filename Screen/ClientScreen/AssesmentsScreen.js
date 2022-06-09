@@ -18,6 +18,7 @@ const AssesmentsScreen = () => {
           title="Weight"
           imageUrl={BodyWeightImage}
           stats="60.0 lbs"
+          route={"TrackWeightScreen"}
         />
         <AssesmentsCard
           title="Body Weight %"
