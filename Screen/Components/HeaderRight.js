@@ -4,7 +4,7 @@ import SvgUri from "expo-svg-uri";
 import { Touchable } from "react-native-web";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const HeaderLeft = ({ image, height, width, margin }) => {
+const HeaderRight = ({ image, height, width, margin }) => {
   return (
     <View
       style={{
@@ -19,6 +19,6 @@ const HeaderLeft = ({ image, height, width, margin }) => {
   );
 };
 
-export default HeaderLeft;
+export default HeaderRight;
 
 const styles = StyleSheet.create({});

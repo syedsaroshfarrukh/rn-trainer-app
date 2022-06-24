@@ -21,7 +21,7 @@ function SelectVideoButton({ title, description }) {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={() => navigation.navigate("YoutubeScreen")}>
       <LinearGradient
         colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
         {...deg(140)}

@@ -20,6 +20,7 @@ import NavigationDrawerHeader from "./Components/NavigationDrawerHeader";
 import NavigationHeaderClientRight from "./Components/NavigationHeaderClientRight";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AddClient from "./DrawerScreens/AddClient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -268,6 +269,14 @@ const SettingScreenStack = ({ navigation }) => {
 };
 
 const DrawerNavigatorRoutes = (props) => {
+  if (props && props.route && props.route.params) {
+    let groupObject = {
+      id: props.route.params.id,
+      title: props.route.params.title,
+    };
+    AsyncStorage.setItem("clientGroupInfo", JSON.stringify(groupObject));
+  }
+
   return (
     <Drawer.Navigator
       drawerContent={CustomSidebarMenu}

@@ -5,31 +5,27 @@ import deviceStorage from "../configurations/deviceStorage";
 class LoginService {
   constructor() {
     this.config = new Configuration();
-    this.componentDidMount();
+
     console.log("COnstructor Called Login Service");
   }
 
-  async componentDidMount() {
-    this.token = await deviceStorage.loadToken();
-    console.log("tokennnnn", this.token);
-    this.tokenConfig = {
-      headers: {
-        Authorization: "Bearer " + this.token,
-      },
-    };
+  loginTrainer(formData) {
+    return axios.post(this.config.apiBaseUrl + "login-trainer", formData);
   }
-
-  login(formData) {
-    return axios.post(this.config.apiBaseUrl + "login", formData);
+  loginClient(formData) {
+    return axios.post(this.config.apiBaseUrl + "login-client", formData);
   }
-  getTrainerProfile() {
-    return axios.get(this.config.apiBaseUrl + "edit-profile", this.tokenConfig);
+  async getTrainerProfile() {
+    return axios.get(
+      this.config.apiBaseUrl + "edit-profile",
+      await deviceStorage.loadToken()
+    );
   }
-  updateTrainerProfile(formData) {
+  async updateTrainerProfile(formData) {
     return axios.post(
       this.config.apiBaseUrl + "update-profile",
       formData,
-      this.tokenConfig
+      await deviceStorage.loadToken()
     );
   }
 

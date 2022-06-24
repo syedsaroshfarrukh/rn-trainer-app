@@ -251,7 +251,13 @@ const DrawerNavigationRoutesClient = (props) => {
       //     color: "#d8d8d8",
       //   },
       // }}
-      screenOptions={{ headerShown: false }}
+      screenOptions={{
+        headerShown: false,
+        drawerStyle: {
+          backgroundColor: "#c6cbef",
+          width: width * 0.7,
+        },
+      }}
       drawerContent={CustomSidebarMenu}
     >
       <Drawer.Screen

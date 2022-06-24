@@ -2,7 +2,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -22,6 +22,7 @@ import ExcerciseImage from "../../Image/excercise.svg";
 import MealsImage from "../../Image/meal.svg";
 import GroupsImage from "../../Image/group.svg";
 import SettingsImage from "../../Image/setting.svg";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
   DrawerContentScrollView,
@@ -31,11 +32,22 @@ import {
 
 const { width, height } = Dimensions.get("window");
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Settings } from "react-native-web";
 import SvgUri from "expo-svg-uri";
 
 const CustomSidebarMenu = (props) => {
+  const [userDetails, setUserDetails] = useState("");
+
+  useEffect(() => {
+    async function AsyncStorageDataLoad() {
+      let user = await AsyncStorage.getItem("user");
+      let parsed = JSON.parse(user);
+      setUserDetails(parsed);
+      console.log(parsed);
+    }
+
+    AsyncStorageDataLoad();
+  }, []);
   return (
     <View style={stylesSidebar.sideMenuContainer}>
       <View style={stylesSidebar.profileHeader}>
@@ -54,9 +66,11 @@ const CustomSidebarMenu = (props) => {
             }}
           >
             <View>
-              <Text style={stylesSidebar.profileHeaderText}>Kate Smith</Text>
+              <Text style={stylesSidebar.profileHeaderText}>
+                {userDetails.firstName} {userDetails.lastName}
+              </Text>
               <Text style={stylesSidebar.profileHeaderEmailText}>
-                kate.smith@tech.com
+                {userDetails.email}
               </Text>
             </View>
           </View>

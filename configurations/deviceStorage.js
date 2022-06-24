@@ -8,7 +8,12 @@ const deviceStorage = {
       let parsed = JSON.parse(user);
       let token = parsed.token;
       console.log("token in service--------------------------------", token);
-      return token;
+      const headers = {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      };
+      return headers;
     } catch (error) {
       console.log("Load token error: ", error);
     }

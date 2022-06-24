@@ -18,13 +18,15 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-function WorkoutTemplateCard({ title, description }) {
+function WorkoutTemplateCard({ title, description, id }) {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("AddNewWorkoutScreen");
+        navigation.navigate("AddNewWorkoutScreen", {
+          id: id,
+        });
       }}
     >
       <LinearGradient

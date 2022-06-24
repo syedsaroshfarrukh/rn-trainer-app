@@ -13,11 +13,19 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-const AssesmentsScreen = ({ imageUrl, title, stats, route }) => {
+const AssesmentsScreen = ({ imageUrl, title, stats, clientId, typeId }) => {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(route)}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("TopBarTrackGraphScreen", {
+          title: title,
+          clientid: clientId,
+          typeid: typeId,
+        })
+      }
+    >
       <LinearGradient
         colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
         {...deg(140)}

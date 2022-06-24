@@ -22,29 +22,27 @@ function ExcerciseCardList({ title }) {
   const navigation = useNavigation();
 
   return (
-    <TouchableOpacity>
-      <LinearGradient
-        colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
-        {...deg(140)}
-        style={stylesSidebar.drawerContainerCard}
+    <LinearGradient
+      colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
+      {...deg(140)}
+      style={stylesSidebar.drawerContainerCard}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+        }}
       >
-        <View
+        <Text
           style={{
-            flexDirection: "row",
+            fontSize: 16,
+            fontWeight: "400",
+            left: "40%",
           }}
         >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "400",
-              left: "40%",
-            }}
-          >
-            {title}
-          </Text>
-        </View>
-      </LinearGradient>
-    </TouchableOpacity>
+          {title}
+        </Text>
+      </View>
+    </LinearGradient>
   );
 }
 

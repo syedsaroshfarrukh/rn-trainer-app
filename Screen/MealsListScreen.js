@@ -7,30 +7,58 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ExcerciseCardList from "./Components/ExcerciseCardList";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import mealService from "../services/mealService";
+import Loader from "./Components/Loader";
 
 const MealsListScreen = () => {
+  const isFocused = useIsFocused();
+
+  const [meals, setMeals] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (isFocused) {
+      setLoading(true);
+      mealService
+        .getAllMeals()
+        .then((res) => {
+          let array = [];
+          res.data.meal.map((item) => {
+            array.push(item);
+          });
+          setMeals(array);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          setLoading(false);
+        });
+    }
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <Loader loading={loading} />
       <ScrollView style={{ flex: 0.9 }}>
-        <ExcerciseCardList title={"Brown Bread"} />
-        <ExcerciseCardList title={"Butter"} />
-        <ExcerciseCardList title={"Alternating Bird Dog"} />
-        <ExcerciseCardList title={"Fried Egg"} />
-        <ExcerciseCardList title={"White Bread"} />
-        <ExcerciseCardList title={"Steam Chicken"} />
-        <ExcerciseCardList title={"Raat Chicken"} />
-        <ExcerciseCardList title={"Abdominal Vacuum"} />
-        <ExcerciseCardList title={"Apple"} />
-        <ExcerciseCardList title={"Honey"} />
-        <ExcerciseCardList title={"Avacados"} />
-        <ExcerciseCardList title={"Anchor Butter"} />
-        <ExcerciseCardList title={"Asda Red Seedless Grapes"} />
-        <ExcerciseCardList title={"Green Peas"} />
+        {meals.length > 1 ? (
+          meals.map((item, key) => {
+            return (
+              <ExcerciseCardList
+                key={key}
+                title={`${item.meal_name}`}
+                id={item.id}
+              />
+            );
+          })
+        ) : (
+          <Text></Text>
+        )}
       </ScrollView>
       <View
         style={{ flex: 0.1, justifyContent: "center", alignItems: "center" }}

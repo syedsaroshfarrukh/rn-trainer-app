@@ -6,6 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 const HeaderLeft = ({ title, image }) => {
   const navigation = useNavigation();
 
+  console.log("-----------Title", title);
+
   return (
     <TouchableOpacity onPress={() => navigation.goBack()}>
       <View
@@ -13,7 +15,6 @@ const HeaderLeft = ({ title, image }) => {
           marginLeft: 10,
           flex: 1,
           flexDirection: "row",
-
           alignItems: "center",
         }}
       >

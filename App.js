@@ -45,51 +45,32 @@ import AddNewWorkoutScreen from "./Screen/AddNewWorkoutScreen";
 import LogTodayWorkout from "./Screen/ClientScreen/LogWorkoutScreen";
 import AddNewWorkoutSettngsModalScreen from "./Screen/Components/SettngsModal";
 import TopBarScreenNutrition from "./Screen/TopBarScreenNutrition";
+import TopBarTrackGraphScreen from "./Screen/ClientScreen/TopBarTrackGraphScreen";
 import AssesmentsScreen from "./Screen/ClientScreen/AssesmentsScreen";
+import YoutubeScreen from "./Screen/YoutubeScreen";
 import TrackWeightScreen from "./Screen/ClientScreen/TrackWeightScreen";
+import AddExcerciseListScreen from "./Screen/AddExcerciseListScreen";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { AuthContext } from "./configurations/AuthContectApi";
+import CustomMenu from "./Screen/Components/CustomMenu";
+import SetsInfoScreen from "./Screen/SetsInfoScreen";
+import AddGroupMembersListScreen from "./Screen/AddGroupMembersListScreen";
+import WeeklyPlanListScreen from "./Screen/WeeklyPlanListScreen";
+import AddNewMealMainCard from "./Screen/AddNewMealMainCard";
+import AddMealListToCardList from "./Screen/AddMealListToCardList";
+import WeeklyPlanTemplateScreen from "./Screen/WeeklyPlanTemplateScreen";
+import TopBarScreenWeeklyPlanTemplate from "./Screen/TopBarScreenWeeklyPlanTemplate";
+import CopyWorkoutTemplateList from "./Screen/CopyWorkoutTemplateList";
+import GroupsListScreen from "./Screen/GroupsListScreen";
 
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createStackNavigator();
 
-const CustomMenu = () => {
-  const [showMenu, setShowMenu] = React.useState(true);
-
-  return (
-    <View
-      style={{
-        position: "absolute",
-      }}
-    >
-      <Menu
-        style={{ width: "45%" }}
-        visible={showMenu}
-        onDismiss={() => setShowMenu(false)}
-        anchor={
-          <TouchableOpacity
-            onPress={() => {
-              setShowMenu(true);
-              console.log(showMenu);
-            }}
-          >
-            <HeaderRight image={DotsSvg} margin={15} height={28} width={28} />
-          </TouchableOpacity>
-        }
-      >
-        <Menu.Item onPress={() => setShowMenu(false)} title="Add Superset" />
-        <Divider />
-        <Menu.Item onPress={() => setShowMenu(false)} title="Add Circuit" />
-        <Divider />
-        <Menu.Item onPress={() => setShowMenu(false)} title="Add Note" />
-      </Menu>
-    </View>
-  );
-};
-
 const Auth = () => {
   // Stack Navigator for Login and Sign up Screen
+
   return (
     <Provider>
       <Stack.Navigator
@@ -262,14 +243,14 @@ const App = () => {
             }}
           />
           <Stack.Screen
-            name="AddNewWorkoutScreen"
-            component={AddNewWorkoutScreen}
+            name="CopyWorkoutTemplateList"
+            component={CopyWorkoutTemplateList}
             options={{
               title: "",
               headerLeft: () => (
-                <HeaderLeft title={"Create Template"} image={HeaderIcon} />
+                <HeaderLeft title={"Copy Template"} image={HeaderIcon} />
               ),
-              headerRight: () => <CustomMenu />,
+
               headerStyle: {
                 backgroundColor: "#FFFFFF",
                 shadowColor: "#000",
@@ -288,6 +269,63 @@ const App = () => {
             }}
           />
           <Stack.Screen
+            name="SetsInfoScreen"
+            component={SetsInfoScreen}
+            options={({ route, navigation }) => {
+              return {
+                title: "",
+                headerLeft: () => (
+                  <HeaderLeft title={route.params.title} image={HeaderIcon} />
+                ),
+
+                headerStyle: {
+                  backgroundColor: "#FFFFFF",
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5, //Set Header color
+                },
+                headerTintColor: "#333333", //Set Header text color
+                headerTitleStyle: {
+                  fontWeight: "500", //Set Header text style
+                },
+              };
+            }}
+          />
+          <Stack.Screen
+            name="AddNewWorkoutScreen"
+            component={AddNewWorkoutScreen}
+            options={({ route, navigation }) => {
+              console.log(route);
+              return {
+                title: "",
+                headerLeft: () => (
+                  <HeaderLeft title={"Create Template"} image={HeaderIcon} />
+                ),
+                headerRight: () => <CustomMenu navigation={route} />,
+                headerStyle: {
+                  backgroundColor: "#FFFFFF",
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5, //Set Header color
+                },
+                headerTintColor: "#333333", //Set Header text color
+                headerTitleStyle: {
+                  fontWeight: "500", //Set Header text style
+                },
+              };
+            }}
+          />
+          <Stack.Screen
             name="NutritionPlanScreen"
             component={NutritionPlanScreen}
             options={{
@@ -295,14 +333,113 @@ const App = () => {
               headerLeft: () => (
                 <HeaderLeft title={"Nutrition Template"} image={HeaderIcon} />
               ),
-              headerRight: () => (
-                <HeaderRight
-                  image={DotsSvg}
-                  margin={15}
-                  height={28}
-                  width={28}
-                />
+              // headerRight: () => (
+              //   <HeaderRight
+              //     image={DotsSvg}
+              //     margin={15}
+              //     height={28}
+              //     width={28}
+              //   />
+              // ),
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="WeeklyPlanListScreen"
+            component={WeeklyPlanListScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Weekly Plan"} image={HeaderIcon} />
               ),
+              // headerRight: () => (
+              //   <HeaderRight
+              //     image={DotsSvg}
+              //     margin={15}
+              //     height={28}
+              //     width={28}
+              //   />
+              // ),
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="GroupsListScreen"
+            component={GroupsListScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Groups"} image={HeaderIcon} />
+              ),
+              // headerRight: () => (
+              //   <HeaderRight
+              //     image={DotsSvg}
+              //     margin={15}
+              //     height={28}
+              //     width={28}
+              //   />
+              // ),
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="WeeklyPlanTemplateScreen"
+            component={WeeklyPlanTemplateScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Weekly Plan"} image={HeaderIcon} />
+              ),
+              // headerRight: () => (
+              //   <HeaderRight
+              //     image={DotsSvg}
+              //     margin={15}
+              //     height={28}
+              //     width={28}
+              //   />
+              // ),
               headerStyle: {
                 backgroundColor: "#FFFFFF",
                 shadowColor: "#000",
@@ -368,6 +505,56 @@ const App = () => {
                   height={24}
                   width={24}
                 />
+              ),
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="AddExcerciseListScreen"
+            component={AddExcerciseListScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Excercises"} image={HeaderIcon} />
+              ),
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="AddGroupMembersListScreen"
+            component={AddGroupMembersListScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Select Members"} image={HeaderIcon} />
               ),
               headerStyle: {
                 backgroundColor: "#FFFFFF",
@@ -538,6 +725,32 @@ const App = () => {
             }}
           />
           <Stack.Screen
+            name="AddNewMealMainCard"
+            component={AddNewMealMainCard}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"New Meal"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
             name="GroupsScreen"
             component={GroupsScreen}
             options={{
@@ -569,7 +782,7 @@ const App = () => {
             options={{
               title: "",
               headerLeft: () => (
-                <HeaderLeft title={"Select Groups"} image={HeaderIcon} />
+                <HeaderLeft title={"Selected Members"} image={HeaderIcon} />
               ),
 
               headerStyle: {
@@ -648,7 +861,7 @@ const App = () => {
             options={{
               title: "",
               headerLeft: () => (
-                <HeaderLeft title={"Workout"} image={HeaderIcon} />
+                <HeaderLeft title={"Daily Nutrition"} image={HeaderIcon} />
               ),
               headerRight: () => (
                 <HeaderRight
@@ -657,6 +870,69 @@ const App = () => {
                   height={28}
                   width={28}
                 />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="TopBarTrackGraphScreen"
+            component={TopBarTrackGraphScreen}
+            // Hiding header for Navigation Drawer
+            options={({ route, navigation }) => {
+              return {
+                title: "",
+                headerLeft: () => (
+                  <HeaderLeft
+                    title={`Add ${route.params.title}`}
+                    image={HeaderIcon}
+                  />
+                ),
+
+                headerStyle: {
+                  backgroundColor: "#FFFFFF",
+                },
+                headerTintColor: "#333333", //Set Header text color
+                headerTitleStyle: {
+                  fontWeight: "500", //Set Header text style
+                },
+              };
+            }}
+          />
+          <Stack.Screen
+            name="TopBarScreenWeeklyPlanTemplate"
+            component={TopBarScreenWeeklyPlanTemplate}
+            // Hiding header for Navigation Drawer
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Daily Plan Template"} image={HeaderIcon} />
+              ),
+              // headerRight: () => <PlanTemplateMenu navigation={route} />,
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="AddMealListToCardList"
+            component={AddMealListToCardList}
+            // Hiding header for Navigation Drawer
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Meals"} image={HeaderIcon} />
               ),
 
               headerStyle: {
@@ -685,6 +961,14 @@ const App = () => {
               headerTitleStyle: {
                 fontWeight: "500", //Set Header text style
               },
+            }}
+          />
+          <Stack.Screen
+            name="YoutubeScreen"
+            component={YoutubeScreen}
+            // Hiding header for Navigation Drawer
+            options={{
+              headerShown: false,
             }}
           />
           <Stack.Screen

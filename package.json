@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.17.4",
+    "@react-native-community/datetimepicker": "6.1.2",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/drawer": "^6.4.1",
@@ -23,6 +24,7 @@
     "expo-status-bar": "~1.3.0",
     "expo-svg-uri": "^1.3.1",
     "formik": "^2.2.9",
+    "moment": "^2.29.3",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-native": "0.68.1",
@@ -33,6 +35,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-linear-gradient": "^2.5.6",
     "react-native-linear-gradient-degree": "^0.0.1",
+    "react-native-modal-datetime-picker": "^13.1.2",
     "react-native-pager-view": "5.4.15",
     "react-native-paper": "^4.12.1",
     "react-native-reanimated": "^2.8.0",

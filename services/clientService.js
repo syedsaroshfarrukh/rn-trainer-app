@@ -5,28 +5,55 @@ import deviceStorage from "../configurations/deviceStorage";
 class ClientService {
   constructor() {
     this.config = new Configuration();
-    this.componentDidMount();
-    console.log("COnstructor Called");
   }
 
-  async componentDidMount() {
-    this.token = await deviceStorage.loadToken();
-    console.log("tokennnnn", this.token);
-    this.tokenConfig = {
-      headers: {
-        Authorization: "Bearer " + this.token,
-      },
-    };
+  async getAllClient() {
+    return axios.get(
+      this.config.apiBaseUrl + "allClients",
+      await deviceStorage.loadToken()
+    );
   }
 
-  getAllClient() {
-    return axios.get(this.config.apiBaseUrl + "allClients", this.tokenConfig);
-  }
-
-  getClientInvite(id) {
+  async getClientInvite(id) {
     return axios.get(
       this.config.apiBaseUrl + `client-invite/${id}`,
-      this.tokenConfig
+      await deviceStorage.loadToken()
+    );
+  }
+  async getSingleClient(id) {
+    return axios.get(
+      this.config.apiBaseUrl + `client-setting/${id}`,
+      await deviceStorage.loadToken()
+    );
+  }
+
+  async getClientAssessments(id) {
+    return axios.get(
+      this.config.apiBaseUrl + `assessment-type/${id}`,
+      await deviceStorage.loadToken()
+    );
+  }
+
+  async getAssessmentDetails(id, type_id) {
+    return axios.get(
+      this.config.apiBaseUrl + `assessment/${id}/${type_id}`,
+      await deviceStorage.loadToken()
+    );
+  }
+
+  async addNewClient(formData) {
+    return axios.post(
+      this.config.apiBaseUrl + `addClient`,
+      formData,
+      await deviceStorage.loadToken()
+    );
+  }
+
+  async addNewAssessment(formData) {
+    return axios.post(
+      this.config.apiBaseUrl + `assessment-add`,
+      formData,
+      await deviceStorage.loadToken()
     );
   }
 

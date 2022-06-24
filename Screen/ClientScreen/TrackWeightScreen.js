@@ -1,149 +1,153 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
   Dimensions,
-  StatusBar,
   Text,
-  SafeAreaView,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import HeaderIcon from "../../Image/arrow.svg";
 import SvgUri from "expo-svg-uri";
 import { LineChart } from "react-native-chart-kit";
 import GraphStatCard from "../Components/GraphStatCard";
+import AddWeightModal from "../Components/AddWeightModal";
+import Loader from "../Components/Loader";
+import clientService from "../../services/clientService";
 
 const { width, height } = Dimensions.get("window");
 
-const firstMonth = () => (
-  <View
-    style={{
-      flex: 1,
-    }}
-  >
-    <View
-      style={{
-        flex: 0.37,
-      }}
-    >
-      <LineChart
-        data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
-          datasets: [
-            {
-              data: [
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-              ],
-            },
-          ],
-        }}
-        width={Dimensions.get("window").width} // from react-native
-        height={220}
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: "#ffffff",
-          backgroundGradientFrom: "#ffffff",
-          backgroundGradientTo: "#ffffff",
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(0, 255, 239, 0.71)`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, 1)`,
-          style: {
-            borderRadius: 16,
-          },
-          propsForDots: {
-            r: "5",
-            strokeWidth: "2",
-            stroke: "rgba(0, 255, 239, 0.71)",
-          },
-        }}
-        bezier
-        withVerticalLines={false}
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-          marginTop: 20,
-        }}
-      />
-    </View>
-    <View
-      style={{
-        flex: 0.1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <TouchableOpacity style={styles.buttonStyle} activeOpacity={0.5}>
-        <Text style={styles.buttonTextStyle}>Add Weight</Text>
-      </TouchableOpacity>
-    </View>
-    <View style={{ flex: 0.53 }}>
-      <GraphStatCard title="May 06, 2022" stats="60.0 lbs" />
-      <GraphStatCard title="May 02, 2022" stats="160.0 lbs" />
-    </View>
-  </View>
-);
+const TrackWeightScreen = ({ title, clientId, typeId }) => {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [assessment, setAssessment] = useState(false);
+  const [refrestState, setRefrestState] = useState(false);
 
-const thirdMonth = () => (
-  <View style={[styles.scene, { backgroundColor: "#FFFFFF" }]} />
-);
-const sixthMonth = () => (
-  <View style={[styles.scene, { backgroundColor: "#FFFFFF" }]} />
-);
+  const RefreshList = (newValue) => {
+    setRefrestState(newValue);
+  };
 
-const Yearly = () => (
-  <View style={[styles.scene, { backgroundColor: "#FFFFFF" }]} />
-);
-
-const initialLayout = { width: Dimensions.get("window").width };
-
-export default function TabViewExample() {
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: "firstMonth", title: "1 Month" },
-    { key: "thirdMonth", title: "3 Month" },
-    { key: "sixthMonth", title: "6 Month" },
-    { key: "Yearly", title: "1 Year" },
-  ]);
-
-  const renderScene = SceneMap({
-    firstMonth: firstMonth,
-    thirdMonth: thirdMonth,
-    sixthMonth: sixthMonth,
-    Yearly: Yearly,
-  });
+  useEffect(() => {
+    setLoading(true);
+    clientService
+      .getAssessmentDetails(clientId, typeId)
+      .then((res) => {
+        let array = [];
+        res.data.assessment.map((item) => {
+          array.push(item);
+        });
+        setAssessment(array);
+        setLoading(false);
+        console.log("Client Id", id);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+        setLoading(false);
+      });
+  }, [refrestState]);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
-      <TabView
-        navigationState={{ index, routes }}
-        renderTabBar={(props) => (
-          <TabBar
-            {...props}
-            renderLabel={({ route, color }) => (
-              <>
-                <Text style={{ color: "black" }}>{route.title}</Text>
-              </>
-            )}
-            style={{
-              backgroundColor: "white",
-            }}
-            indicatorStyle={{ backgroundColor: "#333333", height: 3 }}
-          />
-        )}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={initialLayout}
-        style={styles.container}
+    <View
+      style={{
+        flex: 1,
+      }}
+    >
+      <Loader loading={loading} />
+      <View
+        style={{
+          flex: 0.37,
+        }}
+      >
+        <LineChart
+          data={{
+            labels: ["January", "February", "March", "April", "May", "June"],
+            datasets: [
+              {
+                data: [
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                ],
+              },
+            ],
+          }}
+          width={Dimensions.get("window").width} // from react-native
+          height={220}
+          yAxisInterval={1} // optional, defaults to 1
+          chartConfig={{
+            backgroundColor: "#ffffff",
+            backgroundGradientFrom: "#ffffff",
+            backgroundGradientTo: "#ffffff",
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(0, 255, 239, 0.71)`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, 1)`,
+            style: {
+              borderRadius: 16,
+            },
+            propsForDots: {
+              r: "5",
+              strokeWidth: "2",
+              stroke: "rgba(0, 255, 239, 0.71)",
+            },
+          }}
+          bezier
+          withVerticalLines={false}
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+            marginTop: 20,
+          }}
+        />
+      </View>
+      <View
+        style={{
+          flex: 0.1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <TouchableOpacity
+          style={styles.buttonStyle}
+          activeOpacity={0.5}
+          onPress={() => setOpen(true)}
+        >
+          <Text style={styles.buttonTextStyle}>Add {title}</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ flex: 0.53 }}>
+        <ScrollView style={{ flex: 1, alignContent: "stretch" }}>
+          {assessment.length >= 1 ? (
+            assessment.map((item, key) => {
+              return (
+                <GraphStatCard
+                  key={key}
+                  title={item.date}
+                  stats={`${item.assessment} lbs`}
+                />
+              );
+            })
+          ) : (
+            <Text></Text>
+          )}
+        </ScrollView>
+      </View>
+      <AddWeightModal
+        title={`Add ${title}`}
+        open={open}
+        onClose={() => setOpen(false)}
+        RefreshList={RefreshList}
+        clientId={clientId}
+        typeId={typeId}
       />
-    </SafeAreaView>
+    </View>
   );
-}
+};
+
+export default TrackWeightScreen;
 
 const styles = StyleSheet.create({
   container: {

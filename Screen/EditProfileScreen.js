@@ -15,28 +15,60 @@ import { Formik } from "formik";
 import Loader from "./Components/Loader";
 import DropdownAlert from "react-native-dropdownalert";
 import loginService from "../services/loginService";
+import clientService from "../services/clientService";
 import profileValidationSchema from "../validations/profileValidationSchema";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-const EditProfileScreen = () => {
+const EditProfileScreen = (props) => {
   const [loading, setLoading] = useState(false);
   const [user, seUser] = useState(false);
+  const [userDetails, setUserDetails] = useState("");
+
+  const focused = useIsFocused();
 
   let dropDownAlertRef = useRef();
+  useEffect(() => {
+    async function AsyncStorageDataLoad() {
+      let userDetail = await AsyncStorage.getItem("user");
+      let parsed = JSON.parse(userDetail);
+      setUserDetails(parsed);
+      console.log("client details", parsed);
+    }
+    AsyncStorageDataLoad();
+  }, []);
 
   useEffect(() => {
-    setLoading(true);
-    loginService
-      .getTrainerProfile()
-      .then((res) => {
-        seUser(res.data.user);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log("Error", error);
-      });
-  }, []);
+    if (userDetails) {
+      console.log("User Detailssss", userDetails);
+      setLoading(true);
+      if (userDetails.role === "trainer") {
+        loginService
+          .getTrainerProfile()
+          .then((res) => {
+            seUser(res.data.user);
+            setLoading(false);
+          })
+          .catch((error) => {
+            setLoading(false);
+            console.log("Error", error);
+          });
+      } else {
+        clientService
+          .getSingleClient(userDetails.id)
+          .then((res) => {
+            seUser(res.data.user[0]);
+            setLoading(false);
+          })
+          .catch((error) => {
+            setLoading(false);
+            console.log("Error", error);
+          });
+      }
+    }
+  }, [focused, userDetails]);
 
   return (
     <Formik

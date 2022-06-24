@@ -15,10 +15,15 @@ import { Formik } from "formik";
 import Loader from "./Components/Loader";
 import DropdownAlert from "react-native-dropdownalert";
 import changePasswordValidation from "../validations/changePasswordValidations";
+import loginService from "../services/loginService";
 
 const { width, height } = Dimensions.get("window");
 
 const ChangePasswordScreen = () => {
+  const [loading, setLoading] = useState(false);
+
+  let dropDownAlertRef = useRef();
+
   return (
     <Formik
       enableReinitialize={true}
@@ -27,29 +32,25 @@ const ChangePasswordScreen = () => {
         confirmPassword: "",
       }}
       onSubmit={(values) => {
-        console.log("user", user);
-        // console.log(values);
-        // setLoading(true);
-        // loginService
-        //   .updateTrainerProfile({
-        //     first_name: values.firstName,
-        //     last_name: values.lastName,
-        //     email: values.email,
-        //     phone: values.phoneNo,
-        //   })
-        //   .then((res) => {
-        //     console.log("response", res.data);
-        //     dropDownAlertRef.alertWithType("success", "Profile Updated");
-        //     setLoading(false);
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //     dropDownAlertRef.alertWithType(
-        //       "error",
-        //       "Invalid Email or Password"
-        //     );
-        //     setLoading(false);
-        //   });
+        console.log(values);
+        setLoading(true);
+        loginService
+          .updateTrainerProfile({
+            password: values.password,
+          })
+          .then((res) => {
+            console.log("response", res.data);
+            dropDownAlertRef.alertWithType("success", "Password Changed");
+            setLoading(false);
+          })
+          .catch((error) => {
+            console.log(error);
+            dropDownAlertRef.alertWithType(
+              "error",
+              "Invalid Email or Password"
+            );
+            setLoading(false);
+          });
       }}
       validationSchema={changePasswordValidation}
     >
@@ -67,6 +68,7 @@ const ChangePasswordScreen = () => {
             backgroundColor: "#FFFFFF",
           }}
         >
+          <Loader loading={loading} />
           <View style={{ flex: 1, padding: 16 }}>
             <View style={styles.container}>
               <View style={styles.firstRow}>
@@ -86,7 +88,20 @@ const ChangePasswordScreen = () => {
                   onChangeText={handleChange("password")}
                   onBlur={handleBlur("password")}
                   value={values.password}
+                  secureTextEntry={true}
                 />
+                {errors.password && (
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      color: "red",
+                      marginLeft: "2%",
+                      marginTop: "-2%",
+                    }}
+                  >
+                    {errors.password}
+                  </Text>
+                )}
                 <TextInput
                   style={styles.inputStyle}
                   underlineColorAndroid="#f000"
@@ -94,23 +109,46 @@ const ChangePasswordScreen = () => {
                   placeholderTextColor="#8b9cb5"
                   autoCapitalize="none"
                   returnKeyType="next"
-                  onChangeText={handleChange("confirm password")}
-                  onBlur={handleBlur("password")}
-                  value={values.password}
+                  onChangeText={handleChange("confirmPassword")}
+                  onBlur={handleBlur("confirmPassword")}
+                  value={values.confirmPassword}
+                  secureTextEntry={true}
                 />
+                {errors.confirmPassword && (
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      color: "red",
+                      marginLeft: "2%",
+                      marginTop: "-2%",
+                    }}
+                  >
+                    {errors.confirmPassword}
+                  </Text>
+                )}
 
                 <View
                   style={{ flex: 1, alignItems: "center", marginTop: "2%" }}
                 >
-                  <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonTextStyle} onPress={handleSubmit}>
-                      Save
-                    </Text>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={handleSubmit}
+                  >
+                    <Text style={styles.buttonTextStyle}>Save</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
           </View>
+          <DropdownAlert
+            updateStatusBar={false}
+            defaultContainer={{ padding: 15, paddingTop: 20 }}
+            ref={(ref) => {
+              if (ref) {
+                dropDownAlertRef = ref;
+              }
+            }}
+          />
         </View>
       )}
     </Formik>

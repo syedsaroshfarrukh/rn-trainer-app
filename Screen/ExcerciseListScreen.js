@@ -7,28 +7,58 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ExcerciseCardList from "./Components/ExcerciseCardList";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
+import Loader from "./Components/Loader";
+import excerciseService from "../services/excerciseService";
 
 const ExcerciseListScreen = () => {
+  const isFocused = useIsFocused();
+
+  const [excercise, setExcercise] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (isFocused) {
+      setLoading(true);
+      excerciseService
+        .getAllExcercises()
+        .then((res) => {
+          let array = [];
+          res.data.exercise.map((item) => {
+            array.push(item);
+          });
+          setExcercise(array);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          setLoading(false);
+        });
+    }
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <Loader loading={loading} />
       <ScrollView style={{ flex: 0.9 }}>
-        <ExcerciseCardList title={"Angle Side Bridge"} />
-        <ExcerciseCardList title={"Abdominal Vacuum"} />
-        <ExcerciseCardList title={"Alternating Bird Dog"} />
-        <ExcerciseCardList title={"Abdominal Vacuum"} />
-        <ExcerciseCardList title={"Angle Side Bridge"} />
-        <ExcerciseCardList title={"Alternating Step-down"} />
-        <ExcerciseCardList title={"Angle Side Bridge"} />
-        <ExcerciseCardList title={"Abdominal Vacuum"} />
-        <ExcerciseCardList title={"Alternating Bird Dog"} />
-        <ExcerciseCardList title={"Abdominal Vacuum"} />
-        <ExcerciseCardList title={"Angle Side Bridge"} />
-        <ExcerciseCardList title={"Alternating Step-down"} />
+        {excercise.length > 1 ? (
+          excercise.map((item, key) => {
+            return (
+              <ExcerciseCardList
+                key={key}
+                title={`${item.name}`}
+                id={item.id}
+              />
+            );
+          })
+        ) : (
+          <Text></Text>
+        )}
       </ScrollView>
       <View
         style={{ flex: 0.1, justifyContent: "center", alignItems: "center" }}

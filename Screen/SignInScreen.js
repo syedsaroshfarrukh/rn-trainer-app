@@ -36,6 +36,9 @@ const LoginScreen = ({ navigation }) => {
   function trainerNavigationFunction() {
     navigation.replace("DrawerNavigationRoutes");
   }
+  function clientNavigationFunction() {
+    navigation.replace("DrawerNavigationRoutesClient");
+  }
 
   const handleSubmitPress = () => {
     setErrortext("");
@@ -112,40 +115,90 @@ const LoginScreen = ({ navigation }) => {
         }}
         onSubmit={(values) => {
           setLoading(true);
-          loginervices
-            .login({
-              email: values.email,
-              password: values.password,
-            })
-            .then((res) => {
-              // setIsLoading(false);
-              // dropDownAlertRef.alertWithType(
-              //   "success",
-              //   "User Registered Successfully"
-              // );
-              let userObject = {
-                role: res.data.success.role[0],
-                firstName: res.data.success.user.first_name,
-                lastName: res.data.success.user.last_name,
-                email: res.data.success.user.email,
-                token: res.data.success.token,
-              };
-              dropDownAlertRef.alertWithType("success", "Login Successfull");
-              AsyncStorage.setItem("user", JSON.stringify(userObject));
-              setTimeout(trainerNavigationFunction, 1000);
+          console.log(toggle1);
+          toggle1 === true
+            ? loginervices
+                .loginTrainer({
+                  email: values.email,
+                  password: values.password,
+                })
+                .then((res) => {
+                  // setIsLoading(false);
+                  // dropDownAlertRef.alertWithType(
+                  //   "success",
+                  //   "User Registered Successfully"
+                  // );
+                  let userObject = {
+                    id: res.data.success.user.id,
+                    role: res.data.success.role[0],
+                    firstName: res.data.success.user.first_name,
+                    lastName: res.data.success.user.last_name,
+                    email: res.data.success.user.email,
+                    token: res.data.success.token,
+                  };
+                  dropDownAlertRef.alertWithType(
+                    "success",
+                    "Login Successfull"
+                  );
+                  AsyncStorage.setItem("user", JSON.stringify(userObject));
+                  if (res.data.success.role[0] === "trainer") {
+                    setTimeout(trainerNavigationFunction, 1000);
+                  }
 
-              setLoading(false);
-            })
-            .catch((error) => {
-              // setIsLoading(false); // For hiding loader
-              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
-              console.log(error);
-              dropDownAlertRef.alertWithType(
-                "error",
-                "Invalid Email or Password"
-              );
-              setLoading(false);
-            });
+                  setLoading(false);
+                })
+                .catch((error) => {
+                  // setIsLoading(false); // For hiding loader
+                  // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+                  console.log(error);
+                  dropDownAlertRef.alertWithType(
+                    "error",
+                    "Invalid Credentials Or Trainer Doesn't Exsist"
+                  );
+                  setLoading(false);
+                })
+            : loginervices
+                .loginClient({
+                  email: values.email,
+                  password: values.password,
+                })
+                .then((res) => {
+                  console.log(values);
+                  // setIsLoading(false);
+                  // dropDownAlertRef.alertWithType(
+                  //   "success",
+                  //   "User Registered Successfully"
+                  // );
+                  let userObject = {
+                    id: res.data.success.user.id,
+                    role: res.data.success.role[0],
+                    firstName: res.data.success.user.first_name,
+                    lastName: res.data.success.user.last_name,
+                    email: res.data.success.user.email,
+                    token: res.data.success.token,
+                  };
+                  dropDownAlertRef.alertWithType(
+                    "success",
+                    "Login Successfull"
+                  );
+                  AsyncStorage.setItem("user", JSON.stringify(userObject));
+                  if (res.data.success.role[0] === "client") {
+                    setTimeout(clientNavigationFunction, 1000);
+                  }
+
+                  setLoading(false);
+                })
+                .catch((error) => {
+                  // setIsLoading(false); // For hiding loader
+                  // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+                  console.log(error);
+                  console.log(values);
+                  dropDownAlertRef.alertWithType(
+                    "error",
+                    "Invalid Credentials Or Client Doesn't Exsist"
+                  );
+                  setLoading(false);
+                });
         }}
         validationSchema={loginValidationSchema}
       >
@@ -202,7 +255,6 @@ const LoginScreen = ({ navigation }) => {
                 style={{
                   flexDirection: "column",
                   backgroundColor: toggle1 ? "#42B825" : "transparent",
-
                   height: "100%",
                   width: "50%",
                   alignItems: "center",

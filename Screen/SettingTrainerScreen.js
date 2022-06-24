@@ -43,7 +43,9 @@ const SettingTrainerScreen = () => {
         <Text style={styles.email}>{userInfo.email}</Text>
       </View>
       <View style={styles.secondRow}>
-        <TouchableOpacity onPress={() => navigation.navigate("EditProfile")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("EditProfile", { user: userInfo })}
+        >
           <LinearGradient
             style={styles.card}
             colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}

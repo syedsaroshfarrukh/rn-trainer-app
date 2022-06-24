@@ -7,55 +7,291 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { deg } from "react-native-linear-gradient-degree";
+import { Formik } from "formik";
+import Loader from "./Loader";
+import DropdownAlert from "react-native-dropdownalert";
+import nutritionPlanService from "../../services/nutritionPlanService";
+import workoutService from "../../services/workoutService";
+import planTemplateService from "../../services/planTemplateService";
+import { number } from "yup";
 
 const { width, height } = Dimensions.get("window");
 
-const AddModal = ({ title, placeholder, open, onClose }) => {
+const AddModal = ({
+  title,
+  placeholder,
+  open,
+  onClose,
+  workoutRequest,
+  RefreshList,
+  superSetId,
+  circuitSetId,
+  AddNumberOfSet,
+}) => {
+  const [loading, setLoading] = useState(false);
+
+  let dropDownAlertRef = useRef();
+
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={open}
-      onRequestClose={onClose}
+    <Formik
+      initialValues={{
+        name: "",
+      }}
+      onSubmit={(values, { resetForm }) => {
+        setLoading(true);
+        if (title === "New Workout Template") {
+          workoutRequest
+            .addWorkoutTemplate({
+              name: values.name,
+            })
+            .then((res) => {
+              // setIsLoading(false);
+              // dropDownAlertRef.alertWithType(
+              //   "success",
+              //   "User Registered Successfully"
+              // );
+              dropDownAlertRef.alertWithType(
+                "success",
+                "Workout Template Added"
+              );
+              setLoading(false);
+              setTimeout(onClose, 800);
+              RefreshList(values.name);
+              resetForm();
+              RefreshList("");
+            })
+            .catch((error) => {
+              // setIsLoading(false); // For hiding loader
+              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+              console.log(error);
+              dropDownAlertRef.alertWithType("error", "Error");
+              setLoading(false);
+            });
+        }
+        if (title === "Add New Nutrition") {
+          nutritionPlanService
+            .addNewNutritionPlan({
+              name: values.name,
+            })
+            .then((res) => {
+              // setIsLoading(false);
+              // dropDownAlertRef.alertWithType(
+              //   "success",
+              //   "User Registered Successfully"
+              // );
+              dropDownAlertRef.alertWithType(
+                "success",
+                "Nutrition Template Added"
+              );
+              setLoading(false);
+              setTimeout(onClose, 800);
+              RefreshList(values.name);
+              resetForm();
+              RefreshList("");
+            })
+            .catch((error) => {
+              // setIsLoading(false); // For hiding loader
+              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+              console.log(error);
+              dropDownAlertRef.alertWithType("error", "Error");
+              setLoading(false);
+            });
+        }
+        if (title === "Add Superset Sets") {
+          workoutService
+            .addSupersetSets({
+              sets: values.name,
+              id: superSetId,
+              note: "These are the notes for super set",
+            })
+            .then((res) => {
+              // setIsLoading(false);
+              // dropDownAlertRef.alertWithType(
+              //   "success",
+              //   "User Registered Successfully"
+              // );
+              dropDownAlertRef.alertWithType("success", "Superset Sets Added");
+              setLoading(false);
+              setTimeout(onClose, 800);
+              RefreshList(superSetId);
+              resetForm();
+              RefreshList("");
+            })
+            .catch((error) => {
+              // setIsLoading(false); // For hiding loader
+              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+              console.log(error);
+              dropDownAlertRef.alertWithType("error", "Error");
+              setLoading(false);
+            });
+        }
+        if (title === "Add Circuit Sets") {
+          workoutService
+            .addCircuitSets({
+              sets: values.name,
+              id: circuitSetId,
+              note: "These are the notes for super set",
+            })
+            .then((res) => {
+              // setIsLoading(false);
+              // dropDownAlertRef.alertWithType(
+              //   "success",
+              //   "User Registered Successfully"
+              // );
+              dropDownAlertRef.alertWithType("success", "Superset Sets Added");
+              setLoading(false);
+              setTimeout(onClose, 800);
+              RefreshList(circuitSetId);
+              resetForm();
+              RefreshList("");
+            })
+            .catch((error) => {
+              // setIsLoading(false); // For hiding loader
+              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+              console.log(error);
+              dropDownAlertRef.alertWithType("error", "Error");
+              setLoading(false);
+            });
+        }
+        if (title === "Create New Week Plan !") {
+          planTemplateService
+            .addPlanTemplate({
+              name: values.name,
+            })
+            .then((res) => {
+              // setIsLoading(false);
+              // dropDownAlertRef.alertWithType(
+              //   "success",
+              //   "User Registered Successfully"
+              // );
+              dropDownAlertRef.alertWithType("success", "Plan Template Added");
+              setLoading(false);
+              setTimeout(onClose, 800);
+              RefreshList(circuitSetId);
+              resetForm();
+              RefreshList("");
+            })
+            .catch((error) => {
+              // setIsLoading(false); // For hiding loader
+              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+              console.log(error);
+              dropDownAlertRef.alertWithType("error", "Error");
+              setLoading(false);
+            });
+        }
+        if (AddNumberOfSet === true) {
+          planTemplateService
+            .addSetsToCircuitSuperset({
+              sets: values.name,
+              id: superSetId,
+              note: "These are the notes for super set",
+            })
+            .then((res) => {
+              // setIsLoading(false);
+              // dropDownAlertRef.alertWithType(
+              //   "success",
+              //   "User Registered Successfully"
+              // );
+              dropDownAlertRef.alertWithType("success", "Sets Added");
+              setLoading(false);
+              setTimeout(onClose, 800);
+              RefreshList(circuitSetId);
+              resetForm();
+              RefreshList("");
+            })
+            .catch((error) => {
+              // setIsLoading(false); // For hiding loader
+              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+              console.log(error);
+              dropDownAlertRef.alertWithType("error", "Error");
+              setLoading(false);
+            });
+        }
+      }}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalRowOne}>
-              <Text style={styles.modalText}>{title}</Text>
-            </View>
-            <View style={styles.modalRowTwo}>
-              <LinearGradient
-                style={styles.cardmodal}
-                colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}
-                {...deg(140)}
-              >
-                <TextInput
-                  style={styles.textInput}
-                  placeholder={`${placeholder}`}
-                />
-              </LinearGradient>
-            </View>
-            <View style={styles.modalRowFour}>
-              <TouchableOpacity style={styles.saveButton} onPress={onClose}>
-                <Text
-                  style={{
-                    color: "#FFFFFF",
-                    fontWeight: "600",
-                    fontSize: 16,
-                  }}
-                >
-                  Save
-                </Text>
-              </TouchableOpacity>
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        isValid,
+      }) => (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={open}
+          onRequestClose={onClose}
+        >
+          <Loader loading={loading} />
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <View style={styles.modalContainer}>
+                <View style={styles.modalRowOne}>
+                  <Text style={styles.modalText}>{title}</Text>
+                </View>
+                <View style={styles.modalRowTwo}>
+                  <LinearGradient
+                    style={styles.cardmodal}
+                    colors={[
+                      "rgba(220, 220, 220, 0.29)",
+                      "rgba(255, 255, 255, 0)",
+                    ]}
+                    {...deg(140)}
+                  >
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder={`${placeholder}`}
+                      keyboardType="numeric"
+                      onChangeText={handleChange("name")}
+                      onBlur={handleBlur("name")}
+                      value={values.name}
+                    />
+                  </LinearGradient>
+                </View>
+                <View style={styles.modalRowFour}>
+                  <TouchableOpacity
+                    style={styles.buttonStyleLogin}
+                    activeOpacity={0.5}
+                    onPress={onClose}
+                  >
+                    <Text style={styles.buttonTextStyleLogin}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.saveButton}
+                    onPress={() => {
+                      handleSubmit();
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        fontWeight: "600",
+                        fontSize: 16,
+                      }}
+                    >
+                      Save
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </View>
-        </View>
-      </View>
-    </Modal>
+          <DropdownAlert
+            updateStatusBar={false}
+            defaultContainer={{ padding: 15, paddingTop: 45 }}
+            ref={(ref) => {
+              if (ref) {
+                dropDownAlertRef = ref;
+              }
+            }}
+          />
+        </Modal>
+      )}
+    </Formik>
   );
 };
 
@@ -126,7 +362,8 @@ const styles = StyleSheet.create({
   modalRowFour: {
     flex: 1,
     alignItems: "center",
-    top: "5%",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
   },
   textInput: {
     top: "4%",
@@ -144,7 +381,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     height: width * 0.12,
-    width: width * 0.4,
+    width: width * 0.3,
     backgroundColor: "#41B825",
     justifyContent: "center",
     alignItems: "center",
@@ -177,5 +414,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: "row",
     paddingBottom: 8,
+  },
+  buttonStyleLogin: {
+    backgroundColor: "transparent",
+    borderWidth: 1.5,
+    borderColor: "#41b825",
+    width: width * 0.3,
+    height: 53,
+    alignItems: "center",
+    borderRadius: 8,
+    justifyContent: "center",
+  },
+  buttonTextStyleLogin: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333333",
   },
 });

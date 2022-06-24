@@ -17,12 +17,19 @@ import TabsBottom from "../Components/TabsBottom";
 import AllClientCard from "../Components/AllClientCard";
 import clientService from "../../services/clientService";
 import { array } from "yup";
+import Loader from "../Components/Loader";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const [client, setClients] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const focused = useIsFocused();
+
   useEffect(() => {
+    setLoading(true);
     clientService
       .getAllClient()
       .then((res) => {
@@ -31,13 +38,16 @@ const HomeScreen = () => {
           array.push(item);
         });
         setClients(array);
+        setLoading(false);
       })
       .catch((error) => {
         console.log("Error", error);
+        setLoading(false);
       });
-  }, []);
+  }, [focused]);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
+      <Loader loading={loading} />
       <View style={{ flex: 1, padding: 16 }}>
         <View style={styles.topTextView}>
           <Text style={styles.topTextStyle}>Clients</Text>
@@ -55,7 +65,7 @@ const HomeScreen = () => {
                 );
               })
             ) : (
-              <Text>No Clients Added</Text>
+              <Text></Text>
             )}
           </ScrollView>
         </View>

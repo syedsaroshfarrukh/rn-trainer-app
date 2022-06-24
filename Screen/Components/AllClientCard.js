@@ -10,38 +10,41 @@ const { width, height } = Dimensions.get("window");
 const AllClientCard = ({ Name, id }) => {
   const [client, setClient] = useState({});
 
-  const onShare = async () => {
+  useEffect(() => {
+    clientService
+      .getClientInvite(id)
+      .then((res) => {
+        setClient(res.data.details);
+      })
+      .catch((error) => {
+        console.log("Error", error);
+      });
+  }, []);
+
+  const onShare = async ({ name, email, password }) => {
     try {
-      await clientService
-        .getClientInvite(id)
-        .then((res) => {
-          setClient(res.data.details);
-          const result = Share.share({
-            message: `Hi ${client.user.first_name},
+      const result = await Share.share({
+        message: `Hi ${name},
            
-    I have created a new TrainerLux Fitness app account for you. TrainerLux Fitness app would let us collaborate and help you meet your fitness goals faster.
+I have created a new TrainerLux Fitness app account for you. TrainerLux Fitness app would let us collaborate and help you meet your fitness goals faster.
     
-    Once you have downloaded the app, use the below email and password to login to the app:
-    Email ==> ${client.user.email}
-    Password ==> ${client.password}
+Once you have downloaded the app, use the below email and password to login to the app:
+Email ==> ${email}
+Password ==> ${password}
     
-    If you have any questions, please let me know.
-    Thanks, have a lovely day.
+If you have any questions, please let me know.
+Thanks, have a lovely day.
             `,
-          });
-          if (result.action === Share.sharedAction) {
-            if (result.activityType) {
-              // shared with activity type of result.activityType
-            } else {
-              // shared
-            }
-          } else if (result.action === Share.dismissedAction) {
-            // dismissed
-          }
-        })
-        .catch((error) => {
-          console.log("Error", error);
-        });
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
     } catch (error) {
       alert(error.message);
     }
@@ -126,7 +129,16 @@ const AllClientCard = ({ Name, id }) => {
           />
         </View>
         <View style={{ top: "10%", right: "2%" }}>
-          <Text style={{ fontSize: 12, color: "#42B825" }} onPress={onShare}>
+          <Text
+            style={{ fontSize: 12, color: "#42B825" }}
+            onPress={async () => {
+              await onShare({
+                name: client.user.first_name,
+                email: client.user.email,
+                password: client.password,
+              });
+            }}
+          >
             Send Invite Link
           </Text>
         </View>
