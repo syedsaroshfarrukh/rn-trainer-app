@@ -14,10 +14,24 @@ import {
   Text,
 } from "react-native";
 import SvgUri from "expo-svg-uri";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NavigationHeaderClientRight = (props) => {
   const [height, setHeight] = useState("");
   const [width, setWidth] = useState("");
+
+  const [userInfo, setUserInfo] = useState("");
+
+  useEffect(() => {
+    async function AsyncStorageDataLoad() {
+      let user = await AsyncStorage.getItem("user");
+      let parsed = JSON.parse(user);
+      setUserInfo(parsed);
+      console.log(parsed);
+    }
+
+    AsyncStorageDataLoad();
+  }, []);
 
   useEffect(() => {
     //Get device Height
@@ -32,18 +46,26 @@ const NavigationHeaderClientRight = (props) => {
 
   return (
     <View style={{ flexDirection: "row" }}>
-      <TouchableOpacity onPress={toggleDrawer}>
+      {/* <TouchableOpacity onPress={toggleDrawer}>
         <SvgUri
           source={require("../../Image/search.svg")}
           style={{ width: 25, height: 26, marginTop: 8 }}
         />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={toggleDrawer}>
-        <Image
-          source={require("../../Image/profile.png")}
-          style={{ width: 40, height: 40, marginLeft: 20, marginRight: 20 }}
-        />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+      {/* <TouchableOpacity> */}
+      <Image
+        source={{
+          uri: `http://trainer.asds.com.pk/public/${userInfo.profileImage}`,
+        }}
+        style={{
+          width: 40,
+          height: 40,
+          marginLeft: 20,
+          marginRight: 20,
+          borderRadius: 60 / 2,
+        }}
+      />
+      {/* </TouchableOpacity> */}
     </View>
   );
 };

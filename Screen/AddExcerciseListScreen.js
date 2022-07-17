@@ -83,6 +83,13 @@ const AddExcerciseListScreen = (props) => {
     props.route.params.circuitWorkoutId &&
     props.route.params.circuitWorkoutId;
 
+  let ExcerciseArray =
+    props &&
+    props.route &&
+    props.route.params &&
+    props.route.params.ExcerciseArray &&
+    props.route.params.ExcerciseArray;
+
   useEffect(() => {
     if (isFocused) {
       setLoading(true);
@@ -107,7 +114,7 @@ const AddExcerciseListScreen = (props) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <Loader loading={loading} />
       <ScrollView style={{ flex: 0.9 }}>
-        {excercise.length > 1 ? (
+        {excercise.length >= 1 ? (
           excercise.map((item, key) => {
             return (
               <AddExcerciseCardList
@@ -121,6 +128,8 @@ const AddExcerciseListScreen = (props) => {
                 circuitWorkoutId={circuitWorkoutId}
                 addExcerciseToPlanTemplate={addExcerciseToPlanTemplate}
                 planTemplateSuperSetWorkoutId={planTemplateSuperSetWorkoutId}
+                planTemplateSuperSetId={planTemplateSuperSetId}
+                ExcerciseArray={ExcerciseArray}
               />
             );
           })

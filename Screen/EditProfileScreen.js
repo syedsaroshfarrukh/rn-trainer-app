@@ -19,6 +19,7 @@ import clientService from "../services/clientService";
 import profileValidationSchema from "../validations/profileValidationSchema";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useIsFocused } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 
 const { width, height } = Dimensions.get("window");
 
@@ -26,10 +27,39 @@ const EditProfileScreen = (props) => {
   const [loading, setLoading] = useState(false);
   const [user, seUser] = useState(false);
   const [userDetails, setUserDetails] = useState("");
+  const [image, setImage] = useState(null);
+  const [localuri, setLocalUri] = useState();
+  const [imageFileName, setImageFileName] = useState();
+  const [imageType, setImageType] = useState();
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+
+    let localUri = result.uri;
+    let filename = localUri.split("/").pop();
+
+    let match = /\.(\w+)$/.exec(filename);
+    let type = match ? `image/${match[1]}` : `image`;
+
+    setLocalUri(localUri);
+    setImageFileName(filename);
+    setImageType(type);
+  };
 
   const focused = useIsFocused();
 
   let dropDownAlertRef = useRef();
+
   useEffect(() => {
     async function AsyncStorageDataLoad() {
       let userDetail = await AsyncStorage.getItem("user");
@@ -76,20 +106,25 @@ const EditProfileScreen = (props) => {
       initialValues={{
         firstName: user && user.first_name ? user.first_name : "",
         lastName: user && user.last_name ? user.last_name : "",
-        email: user && user.email ? user.email : "",
         phoneNo: user && user.phone ? user.phone.toString() : "",
       }}
       onSubmit={(values) => {
         console.log("user", user);
         console.log(values);
         setLoading(true);
+        let formData = new FormData();
+        formData.append("profile_image", {
+          uri: localuri,
+          name: imageFileName,
+          type: imageType,
+        });
+        formData.append("first_name", values.firstName);
+        formData.append("last_name", values.lastName);
+        formData.append("phone", values.phoneNo);
+        console.log("formData", formData);
+
         loginService
-          .updateTrainerProfile({
-            first_name: values.firstName,
-            last_name: values.lastName,
-            email: values.email,
-            phone: values.phoneNo,
-          })
+          .updateTrainerProfile(formData)
           .then((res) => {
             console.log("response", res.data);
             dropDownAlertRef.alertWithType("success", "Profile Updated");
@@ -125,9 +160,22 @@ const EditProfileScreen = (props) => {
             <View style={styles.container}>
               <View style={styles.firstRow}>
                 <Image
-                  source={require("../Image/logo-small.png")}
-                  style={{ height: 188, width: 188, top: 10 }}
+                  source={{
+                    uri: image
+                      ? image
+                      : `http://trainer.asds.com.pk/public/${user.profile_image}`,
+                  }}
+                  style={{
+                    height: 140,
+                    width: 140,
+                    top: 10,
+                    marginBottom: 30,
+                    borderRadius: 100,
+                  }}
                 />
+                <TouchableOpacity onPress={pickImage}>
+                  <Text>Select Image</Text>
+                </TouchableOpacity>
               </View>
               <View style={styles.secondRow}>
                 <TextInput
@@ -176,7 +224,7 @@ const EditProfileScreen = (props) => {
                     {errors.lastName}
                   </Text>
                 )}
-                <TextInput
+                {/* <TextInput
                   style={styles.inputStyle}
                   underlineColorAndroid="#f000"
                   placeholder="Email"
@@ -186,8 +234,8 @@ const EditProfileScreen = (props) => {
                   onChangeText={handleChange("email")}
                   onBlur={handleBlur("email")}
                   value={values.email}
-                />
-                {errors.email && (
+                /> */}
+                {/* {errors.email && (
                   <Text
                     style={{
                       fontSize: 10,
@@ -198,7 +246,7 @@ const EditProfileScreen = (props) => {
                   >
                     {errors.email}
                   </Text>
-                )}
+                )} */}
                 <TextInput
                   style={styles.inputStyle}
                   underlineColorAndroid="#f000"

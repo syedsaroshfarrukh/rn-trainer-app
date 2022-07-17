@@ -48,6 +48,13 @@ class GroupService {
       await deviceStorage.loadToken()
     );
   }
+  async assignPlanTemplateToGroup(formData) {
+    return axios.post(
+      this.config.apiBaseUrl + "assign-workout-group",
+      formData,
+      await deviceStorage.loadToken()
+    );
+  }
 
   handleMessage(type) {
     if (type === "add") toast("Successfully Registered!");

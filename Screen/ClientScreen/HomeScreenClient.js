@@ -66,7 +66,7 @@ const HomeScreenClient = (props) => {
               imageUrl={RedChat}
               title={"Chat With Coach"}
               description={"Have A Question. Ask Here."}
-              route={"NutritionPlanScreen"}
+              route={"ChatScreen"}
             />
           </ScrollView>
         </View>

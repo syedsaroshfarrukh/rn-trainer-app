@@ -18,15 +18,33 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-function WorkoutTemplateCard({ title, description, id }) {
+function WorkoutTemplateCard({
+  title,
+  description,
+  id,
+  weeklyPlanList,
+  nutritionPlanList,
+}) {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("AddNewWorkoutScreen", {
-          id: id,
-        });
+        if (nutritionPlanList) {
+          navigation.navigate("NutritionPlanDetails", {
+            nutritionPlanList: nutritionPlanList,
+            title: title,
+          });
+        } else if (weeklyPlanList) {
+          navigation.navigate("NextWorkoutPlanScreen", {
+            weeklyPlanList: weeklyPlanList,
+            title: title,
+          });
+        } else {
+          navigation.navigate("AddNewWorkoutScreen", {
+            id: id,
+          });
+        }
       }}
     >
       <LinearGradient
@@ -48,9 +66,9 @@ function WorkoutTemplateCard({ title, description, id }) {
             }}
           >
             <Text style={stylesSidebar.drawerTitle}>{title}</Text>
-            <Text style={stylesSidebar.drawerTitleDescription}>
+            {/* <Text style={stylesSidebar.drawerTitleDescription}>
               {description}
-            </Text>
+            </Text> */}
           </View>
           <View style={stylesSidebar.drawerContainerCardIcon}>
             <SvgUri

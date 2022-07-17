@@ -48,7 +48,7 @@ const WorkoutTemplateScreen = () => {
       <Loader loading={loading} />
       <View style={styles.rowOne}>
         <ScrollView>
-          {workout.length > 1 ? (
+          {workout.length >= 1 ? (
             workout.map((item, key) => {
               return (
                 <WorkoutTemplateCard

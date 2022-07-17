@@ -14,10 +14,14 @@ import {
   Text,
 } from "react-native";
 import SvgUri from "expo-svg-uri";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 
 const NavigationHeaderClient = (props) => {
   const [height, setHeight] = useState("");
   const [width, setWidth] = useState("");
+
+  const isFocused = useIsFocused();
+  const navigation = useNavigation();
 
   useEffect(() => {
     //Get device Height
@@ -32,13 +36,15 @@ const NavigationHeaderClient = (props) => {
 
   return (
     <View style={{ flexDirection: "row" }}>
-      <TouchableOpacity onPress={toggleDrawer}>
+      {/* <TouchableOpacity onPress={toggleDrawer}>
         <Image
           source={require("../../Image/profile.png")}
           style={{ width: 40, height: 40, marginRight: 15 }}
         />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={toggleDrawer}>
+      </TouchableOpacity> */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate("NotificationScreenClient")}
+      >
         <SvgUri
           source={require("../../Image/notification.svg")}
           style={{

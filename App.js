@@ -3,8 +3,8 @@
 import "react-native-gesture-handler";
 
 // Import React and Component
-import * as React from "react";
-import { View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Text, View } from "react-native";
 import { Button, Menu, Divider, Provider, List } from "react-native-paper";
 // Import Navigators from React Navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -53,6 +53,7 @@ import AddExcerciseListScreen from "./Screen/AddExcerciseListScreen";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { AuthContext } from "./configurations/AuthContectApi";
 import CustomMenu from "./Screen/Components/CustomMenu";
+import CustomMenuPlanTemplate from "./Screen/Components/CustomMenuPlanTemplate";
 import SetsInfoScreen from "./Screen/SetsInfoScreen";
 import AddGroupMembersListScreen from "./Screen/AddGroupMembersListScreen";
 import WeeklyPlanListScreen from "./Screen/WeeklyPlanListScreen";
@@ -62,6 +63,22 @@ import WeeklyPlanTemplateScreen from "./Screen/WeeklyPlanTemplateScreen";
 import TopBarScreenWeeklyPlanTemplate from "./Screen/TopBarScreenWeeklyPlanTemplate";
 import CopyWorkoutTemplateList from "./Screen/CopyWorkoutTemplateList";
 import GroupsListScreen from "./Screen/GroupsListScreen";
+import AssignWorkoutScreen from "./Screen/AssignWorkoutScreen";
+import AssignPlanTemplateListScreen from "./Screen/AssignPlanTemplateListScreen";
+import WeekSelectGroupScreen from "./Screen/WeekSelectGroupScreen";
+import AssignClientScreen from "./Screen/AssignClientScreen";
+import ClientListAssignNutritionPlan from "./Screen/ClientListAssignNutritionPlan";
+import NutritionPlanDetails from "./Screen/ClientScreen/NutritionPlanDetails";
+import MarkAllCompleted from "./Screen/ClientScreen/MarkAllCompleted";
+import NewsCommentScreens from "./Screen/NewsCommentScreens";
+import ChatScreen from "./Screen/ClientScreen/ChatScreen";
+import Chat from "./Screen/ClientScreen/Chat";
+import StripePayment from "./Screen/StripePayment";
+import PaypalPayment from "./Screen/PaypalPayment";
+import SelectPaymentMethodScreen from "./Screen/SelectPaymentMethodScreen";
+import EditClientProfile from "./Screen/EditClientProfile";
+import NotificationScreenClient from "./Screen/DrawerScreens/Notifications";
+import { auth, db } from "./firebase";
 
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -80,6 +97,11 @@ const Auth = () => {
         <Stack.Screen
           name="AuthScreen"
           component={AuthScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SelectPaymentMethodScreen"
+          component={SelectPaymentMethodScreen}
           options={{ headerShown: false }}
         />
 
@@ -120,6 +142,23 @@ const Auth = () => {
 };
 
 const App = () => {
+  const [user, setuser] = useState("");
+  useEffect(() => {
+    const unregister = auth.onAuthStateChanged((userExist) => {
+      console.log("User Exsist", userExist.uid);
+      if (userExist) {
+        db.collection("users").doc(userExist.uid).update({
+          status: "online",
+        });
+        setuser(userExist);
+      } else setuser("");
+    });
+
+    return () => {
+      unregister();
+    };
+  }, []);
+
   return (
     <Provider>
       <NavigationContainer>
@@ -173,6 +212,32 @@ const App = () => {
                 <HeaderLeft title={"Edit Profile"} image={HeaderIcon} />
               ),
               headerBackTitle: "Edit Profile", //Set Header Title
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="EditClientProfile"
+            component={EditClientProfile}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Edit Client"} image={HeaderIcon} />
+              ),
+              headerBackTitle: "Edit Client", //Set Header Title
               headerStyle: {
                 backgroundColor: "#FFFFFF",
                 shadowColor: "#000",
@@ -361,34 +426,32 @@ const App = () => {
           <Stack.Screen
             name="WeeklyPlanListScreen"
             component={WeeklyPlanListScreen}
-            options={{
-              title: "",
-              headerLeft: () => (
-                <HeaderLeft title={"Weekly Plan"} image={HeaderIcon} />
-              ),
-              // headerRight: () => (
-              //   <HeaderRight
-              //     image={DotsSvg}
-              //     margin={15}
-              //     height={28}
-              //     width={28}
-              //   />
-              // ),
-              headerStyle: {
-                backgroundColor: "#FFFFFF",
-                shadowColor: "#000",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
+            options={({ route, navigation }) => {
+              console.log(route);
+              return {
+                title: "",
+                headerLeft: () => (
+                  <HeaderLeft title={"Weekly Plan"} image={HeaderIcon} />
+                ),
+                // headerRight: () => (
+                //   <CustomMenuPlanTemplate navigation={route} />
+                // ),
+                headerStyle: {
+                  backgroundColor: "#FFFFFF",
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5, //Set Header color
                 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 5, //Set Header color
-              },
-              headerTintColor: "#333333", //Set Header text color
-              headerTitleStyle: {
-                fontWeight: "500", //Set Header text style
-              },
+                headerTintColor: "#333333", //Set Header text color
+                headerTitleStyle: {
+                  fontWeight: "500", //Set Header text style
+                },
+              };
             }}
           />
           <Stack.Screen
@@ -607,6 +670,162 @@ const App = () => {
             }}
           />
           <Stack.Screen
+            name="AssignWorkoutScreen"
+            component={AssignWorkoutScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Assign Workout"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="AssignClientScreen"
+            component={AssignClientScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Assign Nutrition"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="NutritionPlanDetails"
+            component={NutritionPlanDetails}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Nutrition Plan"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="ClientListAssignNutritionPlan"
+            component={ClientListAssignNutritionPlan}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Select Client"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="AssignPlanTemplateListScreen"
+            component={AssignPlanTemplateListScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Select Template"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="WeekSelectGroupScreen"
+            component={WeekSelectGroupScreen}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Select Week"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
             name="MealsListScreen"
             component={MealsListScreen}
             options={{
@@ -645,7 +864,40 @@ const App = () => {
             options={{
               title: "",
               headerLeft: () => (
-                <HeaderLeft title={"Sunday's Workout"} image={HeaderIcon} />
+                <HeaderLeft title={"Workout"} image={HeaderIcon} />
+              ),
+              headerRight: () => (
+                <HeaderRight
+                  image={WallClock}
+                  margin={30}
+                  height={24}
+                  width={24}
+                />
+              ),
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
+            name="MarkAllCompleted"
+            component={MarkAllCompleted}
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Well Done!"} image={HeaderIcon} />
               ),
               headerRight: () => (
                 <HeaderRight
@@ -855,30 +1107,61 @@ const App = () => {
             }}
           />
           <Stack.Screen
-            name="TopBarScreenNutrition"
-            component={TopBarScreenNutrition}
-            // Hiding header for Navigation Drawer
+            name="NewsCommentScreens"
+            component={NewsCommentScreens}
             options={{
               title: "",
               headerLeft: () => (
-                <HeaderLeft title={"Daily Nutrition"} image={HeaderIcon} />
-              ),
-              headerRight: () => (
-                <HeaderRight
-                  image={DotsSvg}
-                  margin={15}
-                  height={28}
-                  width={28}
-                />
+                <HeaderLeft title={"News"} image={HeaderIcon} />
               ),
 
               headerStyle: {
                 backgroundColor: "#FFFFFF",
+                shadowColor: "#000",
+                shadowOffset: {
+                  width: 0,
+                  height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5, //Set Header color
               },
               headerTintColor: "#333333", //Set Header text color
               headerTitleStyle: {
                 fontWeight: "500", //Set Header text style
               },
+            }}
+          />
+          <Stack.Screen
+            name="TopBarScreenNutrition"
+            component={TopBarScreenNutrition}
+            // Hiding header for Navigation Drawer
+            options={({ route, navigation }) => {
+              console.log(route);
+              return {
+                title: "",
+                headerLeft: () => (
+                  <HeaderLeft title={"Daily Nutrition"} image={HeaderIcon} />
+                ),
+                headerRight: () => (
+                  <CustomMenuPlanTemplate navigation={route} />
+                ),
+                headerStyle: {
+                  backgroundColor: "#FFFFFF",
+                  shadowColor: "#000",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5, //Set Header color
+                },
+                headerTintColor: "#333333", //Set Header text color
+                headerTitleStyle: {
+                  fontWeight: "500", //Set Header text style
+                },
+              };
             }}
           />
           <Stack.Screen
@@ -964,6 +1247,25 @@ const App = () => {
             }}
           />
           <Stack.Screen
+            name="NotificationScreenClient"
+            component={NotificationScreenClient}
+            // Hiding header for Navigation Drawer
+            options={{
+              title: "",
+              headerLeft: () => (
+                <HeaderLeft title={"Back"} image={HeaderIcon} />
+              ),
+
+              headerStyle: {
+                backgroundColor: "#FFFFFF",
+              },
+              headerTintColor: "#333333", //Set Header text color
+              headerTitleStyle: {
+                fontWeight: "500", //Set Header text style
+              },
+            }}
+          />
+          <Stack.Screen
             name="YoutubeScreen"
             component={YoutubeScreen}
             // Hiding header for Navigation Drawer
@@ -971,9 +1273,22 @@ const App = () => {
               headerShown: false,
             }}
           />
+
           <Stack.Screen
             name="DrawerNavigationRoutes"
             component={DrawerNavigationRoutes}
+            // Hiding header for Navigation Drawer
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="StripePayment"
+            component={StripePayment}
+            // Hiding header for Navigation Drawer
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="PaypalPayment"
+            component={PaypalPayment}
             // Hiding header for Navigation Drawer
             options={{ headerShown: false }}
           />
@@ -984,6 +1299,22 @@ const App = () => {
             // Hiding header for Navigation Drawer
             options={{ headerShown: false }}
           />
+          <Stack.Screen name="ChatScreen">
+            {(props) => <ChatScreen {...props} user={user} />}
+          </Stack.Screen>
+          <Stack.Screen
+            name="Chat"
+            options={({ route }) => ({
+              title: (
+                <View>
+                  <Text>{route.params.name}</Text>
+                  <Text>{route.params.status}</Text>
+                </View>
+              ),
+            })}
+          >
+            {(props) => <Chat {...props} user={user} />}
+          </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

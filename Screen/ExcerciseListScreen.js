@@ -46,7 +46,7 @@ const ExcerciseListScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <Loader loading={loading} />
       <ScrollView style={{ flex: 0.9 }}>
-        {excercise.length > 1 ? (
+        {excercise.length >= 1 ? (
           excercise.map((item, key) => {
             return (
               <ExcerciseCardList

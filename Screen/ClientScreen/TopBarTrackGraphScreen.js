@@ -40,6 +40,7 @@ export default function TabViewExample(props) {
             Refresh={RefreshList}
             title={props.route.params.title}
             clientId={props.route.params.clientid}
+            clientid={props.route.params.clientId}
             typeId={props.route.params.typeid}
           />
         );
@@ -49,6 +50,7 @@ export default function TabViewExample(props) {
             Refresh={RefreshList}
             title={props.route.params.title}
             clientId={props.route.params.clientid}
+            clientid={props.route.params.clientId}
             typeId={props.route.params.typeid}
           />
         );
@@ -58,6 +60,7 @@ export default function TabViewExample(props) {
             Refresh={RefreshList}
             title={props.route.params.title}
             clientId={props.route.params.clientid}
+            clientid={props.route.params.clientId}
             typeId={props.route.params.typeid}
           />
         );
@@ -67,6 +70,7 @@ export default function TabViewExample(props) {
             Refresh={RefreshList}
             title={props.route.params.title}
             clientId={props.route.params.clientid}
+            clientid={props.route.params.clientId}
             typeId={props.route.params.typeid}
           />
         );

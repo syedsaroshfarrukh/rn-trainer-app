@@ -46,7 +46,7 @@ const PlanTemplatesScreen = () => {
       <Loader loading={loading} />
       <View style={styles.firstRow}>
         <ScrollView>
-          {platTemplateList.length > 1 ? (
+          {platTemplateList.length >= 1 ? (
             platTemplateList.map((item, key) => {
               return (
                 <PlanTemplateCard

@@ -22,6 +22,7 @@ import { useNavigation, useIsFocused } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import groupUserInfo from "../../configurations/groupUserInfo";
 import clientService from "../../services/clientService";
+import { auth, db, get } from "../../firebase";
 
 const { width, height } = Dimensions.get("window");
 
@@ -67,8 +68,9 @@ const AddClient = (props) => {
             last_name: values.lastName,
             group_id: [group.id],
           })
-          .then((res) => {
-            console.log(values);
+          .then(async (res) => {
+            console.log("Client Id Passwors", res.data);
+
             // setIsLoading(false);
             // dropDownAlertRef.alertWithType(
             //   "success",

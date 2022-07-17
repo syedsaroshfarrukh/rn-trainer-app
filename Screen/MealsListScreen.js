@@ -46,7 +46,7 @@ const MealsListScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <Loader loading={loading} />
       <ScrollView style={{ flex: 0.9 }}>
-        {meals.length > 1 ? (
+        {meals.length >= 1 ? (
           meals.map((item, key) => {
             return (
               <ExcerciseCardList

@@ -13,7 +13,14 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-const AssesmentsScreen = ({ imageUrl, title, stats, clientId, typeId }) => {
+const AssesmentsScreen = ({
+  imageUrl,
+  title,
+  stats,
+  clientId,
+  typeId,
+  clientid,
+}) => {
   const navigation = useNavigation();
 
   return (
@@ -23,6 +30,7 @@ const AssesmentsScreen = ({ imageUrl, title, stats, clientId, typeId }) => {
           title: title,
           clientid: clientId,
           typeid: typeId,
+          clientId: clientid,
         })
       }
     >

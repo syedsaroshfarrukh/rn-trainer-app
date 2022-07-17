@@ -19,5 +19,23 @@ const deviceStorage = {
     }
     return token;
   },
+  async loadToken1() {
+    try {
+      const user = await AsyncStorage.getItem("user");
+      let parsed = JSON.parse(user);
+      let token = parsed.token;
+      console.log("token in service--------------------------------", token);
+      const headers = {
+        headers: {
+          Authorization: "Bearer " + token,
+          "content-type": "multipart/form-data",
+        },
+      };
+      return headers;
+    } catch (error) {
+      console.log("Load token error: ", error);
+    }
+    return token;
+  },
 };
 export default deviceStorage;

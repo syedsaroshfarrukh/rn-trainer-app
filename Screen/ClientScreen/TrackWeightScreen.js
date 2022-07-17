@@ -15,10 +15,11 @@ import GraphStatCard from "../Components/GraphStatCard";
 import AddWeightModal from "../Components/AddWeightModal";
 import Loader from "../Components/Loader";
 import clientService from "../../services/clientService";
+import moment from "moment";
 
 const { width, height } = Dimensions.get("window");
 
-const TrackWeightScreen = ({ title, clientId, typeId }) => {
+const TrackWeightScreen = ({ title, clientId, typeId, clientid }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [assessment, setAssessment] = useState(false);
@@ -30,21 +31,39 @@ const TrackWeightScreen = ({ title, clientId, typeId }) => {
 
   useEffect(() => {
     setLoading(true);
-    clientService
-      .getAssessmentDetails(clientId, typeId)
-      .then((res) => {
-        let array = [];
-        res.data.assessment.map((item) => {
-          array.push(item);
+    if (clientid) {
+      clientService
+        .getAssessmentDetails(clientid, typeId)
+        .then((res) => {
+          let array = [];
+          res.data.assessment.map((item) => {
+            array.push(item);
+          });
+          setAssessment(array);
+          setLoading(false);
+          console.log("Client Id", clientid, typeId);
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          setLoading(false);
         });
-        setAssessment(array);
-        setLoading(false);
-        console.log("Client Id", id);
-      })
-      .catch((error) => {
-        console.log("Error", error);
-        setLoading(false);
-      });
+    } else {
+      clientService
+        .getAssessmentDetails(clientId, typeId)
+        .then((res) => {
+          let array = [];
+          res.data.assessment.map((item) => {
+            array.push(item);
+          });
+          setAssessment(array);
+          setLoading(false);
+          console.log("Client Id", id);
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          setLoading(false);
+        });
+    }
   }, [refrestState]);
 
   return (
@@ -110,13 +129,17 @@ const TrackWeightScreen = ({ title, clientId, typeId }) => {
           alignItems: "center",
         }}
       >
-        <TouchableOpacity
-          style={styles.buttonStyle}
-          activeOpacity={0.5}
-          onPress={() => setOpen(true)}
-        >
-          <Text style={styles.buttonTextStyle}>Add {title}</Text>
-        </TouchableOpacity>
+        {clientid ? (
+          <View></View>
+        ) : (
+          <TouchableOpacity
+            style={styles.buttonStyle}
+            activeOpacity={0.5}
+            onPress={() => setOpen(true)}
+          >
+            <Text style={styles.buttonTextStyle}>Add {title}</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View style={{ flex: 0.53 }}>
         <ScrollView style={{ flex: 1, alignContent: "stretch" }}>
@@ -125,7 +148,7 @@ const TrackWeightScreen = ({ title, clientId, typeId }) => {
               return (
                 <GraphStatCard
                   key={key}
-                  title={item.date}
+                  title={moment(item.date).format("MMM Do YY")}
                   stats={`${item.assessment} lbs`}
                 />
               );

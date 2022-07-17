@@ -36,6 +36,19 @@ class WorkoutService {
       await deviceStorage.loadToken()
     );
   }
+  async addTodayFreeStyleWorkout(formData) {
+    return axios.post(
+      this.config.apiBaseUrl + `free-style-workout`,
+      formData,
+      await deviceStorage.loadToken()
+    );
+  }
+  async getTodayFreeStyleWorkout(date) {
+    return axios.get(
+      this.config.apiBaseUrl + `free-style-workout/${date}`,
+      await deviceStorage.loadToken()
+    );
+  }
   async addExcerciseToCircuit(formData) {
     return axios.post(
       this.config.apiBaseUrl + `add-exercise-circuit`,

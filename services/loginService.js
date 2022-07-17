@@ -28,6 +28,12 @@ class LoginService {
       await deviceStorage.loadToken()
     );
   }
+  async getNotification() {
+    return axios.get(
+      this.config.apiBaseUrl + "get-notification",
+      await deviceStorage.loadToken()
+    );
+  }
 
   handleMessage(type) {
     if (type === "add") toast("Successfully Registered!");

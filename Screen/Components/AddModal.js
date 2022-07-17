@@ -245,7 +245,7 @@ const AddModal = ({
                     <TextInput
                       style={styles.textInput}
                       placeholder={`${placeholder}`}
-                      keyboardType="numeric"
+                      // keyboardType="numeric"
                       onChangeText={handleChange("name")}
                       onBlur={handleBlur("name")}
                       value={values.name}

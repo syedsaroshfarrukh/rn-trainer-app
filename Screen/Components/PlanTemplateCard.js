@@ -18,14 +18,25 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-function PlanTemplateCard({ title, description, route, id }) {
+function PlanTemplateCard({ title, description, route, id, groupId }) {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("WeeklyPlanTemplateScreen", { planTemplateId: id })
-      }
+      onPress={() => {
+        if (groupId) {
+          navigation.navigate("WeekSelectGroupScreen", {
+            planTemplateId: id,
+            planTemplateName: title,
+            groupId: groupId,
+          });
+        } else {
+          navigation.navigate("WeeklyPlanTemplateScreen", {
+            planTemplateId: id,
+            planTemplateName: title,
+          });
+        }
+      }}
     >
       <LinearGradient
         colors={["rgba(220, 220, 220, 0.29)", "rgba(255, 255, 255, 0)"]}

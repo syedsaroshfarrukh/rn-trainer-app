@@ -46,7 +46,7 @@ const NutritionPlan = () => {
       <Loader loading={loading} />
       <View style={styles.firstRow}>
         <ScrollView>
-          {nutrtionList.length > 1 ? (
+          {nutrtionList.length >= 1 ? (
             nutrtionList.map((item, key) => {
               return (
                 <NutritionPlanTemplate

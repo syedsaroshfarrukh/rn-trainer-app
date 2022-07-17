@@ -40,6 +40,24 @@ class ClientService {
       await deviceStorage.loadToken()
     );
   }
+  async getNextDueWorkout() {
+    return axios.get(
+      this.config.apiBaseUrl + `next-workout`,
+      await deviceStorage.loadToken()
+    );
+  }
+  async getDueWorkout() {
+    return axios.get(
+      this.config.apiBaseUrl + `due-workout`,
+      await deviceStorage.loadToken()
+    );
+  }
+  async getDueNutrition() {
+    return axios.get(
+      this.config.apiBaseUrl + `due-nutrition-plan`,
+      await deviceStorage.loadToken()
+    );
+  }
 
   async addNewClient(formData) {
     return axios.post(
@@ -48,10 +66,27 @@ class ClientService {
       await deviceStorage.loadToken()
     );
   }
+  async clientUpdateSetting(formData) {
+    return axios.post(
+      this.config.apiBaseUrl + `client-setting-update`,
+      formData,
+      await deviceStorage.loadToken()
+    );
+  }
+  async registerClient(formData) {
+    return axios.post(this.config.apiBaseUrl + `register`, formData);
+  }
 
   async addNewAssessment(formData) {
     return axios.post(
       this.config.apiBaseUrl + `assessment-add`,
+      formData,
+      await deviceStorage.loadToken()
+    );
+  }
+  async assignNutrition(formData) {
+    return axios.post(
+      this.config.apiBaseUrl + `assign-nutrition`,
       formData,
       await deviceStorage.loadToken()
     );

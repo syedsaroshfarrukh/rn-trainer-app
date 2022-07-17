@@ -13,7 +13,7 @@ import clientService from "../../services/clientService";
 import getUserId from "../../configurations/getUserId";
 const { width, height } = Dimensions.get("window");
 
-const AssesmentsScreen = () => {
+const AssesmentsScreen = (props) => {
   const [assessment, setAssessment] = useState([]);
   const [id, setId] = useState();
 
@@ -22,6 +22,13 @@ const AssesmentsScreen = () => {
   const navigation = useNavigation();
 
   const isFocused = useIsFocused();
+
+  const clientId =
+    props &&
+    props.route &&
+    props.route.params &&
+    props.route.params.clientId &&
+    props.route.params.clientId;
 
   const _retrieveId = async () => {
     try {
@@ -43,42 +50,133 @@ const AssesmentsScreen = () => {
 
   useEffect(() => {
     setLoading(true);
-    clientService
-      .getClientAssessments(id && id.id)
-      .then((res) => {
-        let array = [];
-        res.data.assessment.map((item) => {
-          array.push(item);
+    if (clientId) {
+      clientService
+        .getClientAssessments(clientId)
+        .then((res) => {
+          setAssessment(res.data.assessment);
+          setLoading(false);
+          console.log("Client Id", id);
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          setLoading(false);
         });
-        setAssessment(array);
-        setLoading(false);
-        console.log("Client Id", id);
-      })
-      .catch((error) => {
-        console.log("Error", error);
-        setLoading(false);
-      });
+    } else {
+      clientService
+        .getClientAssessments(id && id.id)
+        .then((res) => {
+          setAssessment(res.data.assessment);
+          setLoading(false);
+          console.log("Client Id", id);
+        })
+        .catch((error) => {
+          console.log("Error", error);
+          setLoading(false);
+        });
+    }
   }, [id]);
 
   return (
     <View style={styles.container}>
       <Loader loading={loading} />
       <ScrollView style={styles.ScrollView}>
-        {assessment.length > 1 ? (
-          assessment.map((item, key) => {
+        {console.log(assessment)}
+
+        {assessment && assessment["Custom Assessment"] ? (
+          assessment["Custom Assessment"].map((item, key) => {
             return (
-              <AssesmentsCard
-                key={key}
-                title={item.name}
-                imageUrl={BodyWeightImage}
-                stats={
-                  item.last_assessment
-                    ? `${item.last_assessment.assessment} lbs`
-                    : "0 lbs"
-                }
-                clientId={id.id}
-                typeId={item.id}
-              />
+              <>
+                <AssesmentsCard
+                  key={key}
+                  title={item.name}
+                  imageUrl={BodyWeightImage}
+                  stats={
+                    item.last_assessment
+                      ? `${item.last_assessment.assessment} lbs`
+                      : "0 lbs"
+                  }
+                  clientId={id.id}
+                  typeId={item.id}
+                  clientid={clientId}
+                />
+              </>
+            );
+          })
+        ) : (
+          <Text></Text>
+        )}
+        {assessment && assessment.Size ? (
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "400",
+              justifyContent: "center",
+              marginLeft: "8%",
+              marginTop: "3%",
+            }}
+          >
+            SIZE
+          </Text>
+        ) : (
+          <Text></Text>
+        )}
+        {assessment && assessment.Size ? (
+          assessment.Size.map((item, key) => {
+            return (
+              <>
+                <AssesmentsCard
+                  key={key}
+                  title={item.name}
+                  imageUrl={BodyWeightImage}
+                  stats={
+                    item.last_assessment
+                      ? `${item.last_assessment.assessment} lbs`
+                      : "0 lbs"
+                  }
+                  clientId={id.id}
+                  typeId={item.id}
+                  clientid={clientId}
+                />
+              </>
+            );
+          })
+        ) : (
+          <Text></Text>
+        )}
+        {assessment && assessment.Size ? (
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "400",
+              justifyContent: "center",
+              marginLeft: "8%",
+              marginTop: "3%",
+            }}
+          >
+            GIRTH
+          </Text>
+        ) : (
+          <Text></Text>
+        )}
+        {assessment && assessment.Girth ? (
+          assessment.Girth.map((item, key) => {
+            return (
+              <>
+                <AssesmentsCard
+                  key={key}
+                  title={item.name}
+                  imageUrl={BodyWeightImage}
+                  stats={
+                    item.last_assessment
+                      ? `${item.last_assessment.assessment} lbs`
+                      : "0 lbs"
+                  }
+                  clientId={id.id}
+                  typeId={item.id}
+                  clientid={clientId}
+                />
+              </>
             );
           })
         ) : (

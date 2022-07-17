@@ -14,7 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-const GroupMemberCard = ({ name, id, groupId }) => {
+const GroupMemberCard = ({ name, id, groupId, weekNumber, planTemplateId }) => {
   const navigation = useNavigation();
 
   return (
@@ -34,6 +34,14 @@ const GroupMemberCard = ({ name, id, groupId }) => {
             .catch((error) => {
               console.log("Error", error);
             });
+        }
+        if (planTemplateId && weekNumber) {
+          navigation.navigate("AssignClientScreen", {
+            planTemplateId: planTemplateId,
+            weekNumber: weekNumber,
+            clientId: id,
+            clientName: name,
+          });
         }
       }}
     >

@@ -24,7 +24,10 @@ function NutritionPlanTemplate({ title, description, route, id }) {
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.navigate("WeeklyPlanListScreen", { planTemplateId: id })
+        navigation.navigate("WeeklyPlanListScreen", {
+          planTemplateId: id,
+          title: title,
+        })
       }
     >
       <LinearGradient

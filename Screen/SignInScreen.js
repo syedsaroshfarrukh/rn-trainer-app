@@ -20,6 +20,7 @@ import loginervices from "../services/loginService";
 import Loader from "./Components/Loader";
 import DropdownAlert from "react-native-dropdownalert";
 import loginValidationSchema from "../validations/loginValidationsSchema";
+import { auth, db } from "../firebase";
 
 const LoginScreen = ({ navigation }) => {
   const [toggle, setToggle] = useState(true);
@@ -39,56 +40,33 @@ const LoginScreen = ({ navigation }) => {
   function clientNavigationFunction() {
     navigation.replace("DrawerNavigationRoutesClient");
   }
+  const userSignup = async (email, password) => {
+    try {
+      const result = await auth.createUserWithEmailAndPassword(email, password);
+      console.log(result);
+      db.collection("users").doc(result.user.uid).set({
+        name: "Trainer",
+        email: result.user.email,
+        uid: result.user.uid,
+        pic: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgSmojUgwjIB87c4Q0hLCAyl__oiTySWGWJUZtUNHlHjBALLzTsu_vMHYMaEwLts4QEoo&usqp=CAU",
 
-  const handleSubmitPress = () => {
-    setErrortext("");
-    if (!userEmail) {
-      alert("Please fill Email");
-      return;
-    }
-    if (!userPassword) {
-      alert("Please fill Password");
-      return;
-    }
-    setLoading(true);
-    let dataToSend = { email: userEmail, password: userPassword };
-    let formBody = [];
-    for (let key in dataToSend) {
-      let encodedKey = encodeURIComponent(key);
-      let encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-
-    fetch("http://localhost:3000/api/user/login", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        //Header Defination
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
-        setLoading(false);
-        console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.status === "success") {
-          AsyncStorage.setItem("user_id", responseJson.data.email);
-          console.log(responseJson.data.email);
-        } else {
-          setErrortext(responseJson.msg);
-          console.log("Please check your email id or password");
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
+        status: "online",
       });
+
+      alert("Success");
+    } catch (err) {
+      alert(err);
+    }
   };
 
+  const userLogin = async (email, password) => {
+    try {
+      const result = await auth.signInWithEmailAndPassword(email, password);
+      console.log(result);
+    } catch (err) {
+      alert("Email Pr Password Not Correct");
+    }
+  };
   return (
     <KeyboardAwareScrollView
       contentContainerStyle={styles.mainBody}
@@ -135,6 +113,7 @@ const LoginScreen = ({ navigation }) => {
                     lastName: res.data.success.user.last_name,
                     email: res.data.success.user.email,
                     token: res.data.success.token,
+                    profileImage: res.data.success.user.profile_image,
                   };
                   dropDownAlertRef.alertWithType(
                     "success",
@@ -146,6 +125,7 @@ const LoginScreen = ({ navigation }) => {
                   }
 
                   setLoading(false);
+                  userLogin(values.email, "zaqxswcde1");
                 })
                 .catch((error) => {
                   // setIsLoading(false); // For hiding loader
@@ -162,13 +142,9 @@ const LoginScreen = ({ navigation }) => {
                   email: values.email,
                   password: values.password,
                 })
-                .then((res) => {
-                  console.log(values);
-                  // setIsLoading(false);
-                  // dropDownAlertRef.alertWithType(
-                  //   "success",
-                  //   "User Registered Successfully"
-                  // );
+                .then(async (res) => {
+                  console.log(res.data);
+
                   let userObject = {
                     id: res.data.success.user.id,
                     role: res.data.success.role[0],
@@ -176,17 +152,74 @@ const LoginScreen = ({ navigation }) => {
                     lastName: res.data.success.user.last_name,
                     email: res.data.success.user.email,
                     token: res.data.success.token,
+                    profileImage: res.data.success.user.profile_image,
                   };
                   dropDownAlertRef.alertWithType(
                     "success",
                     "Login Successfull"
                   );
-                  AsyncStorage.setItem("user", JSON.stringify(userObject));
-                  if (res.data.success.role[0] === "client") {
-                    setTimeout(clientNavigationFunction, 1000);
-                  }
 
                   setLoading(false);
+                  const querySanp = await db
+                    .collection("users")
+                    .where("email", "==", values.email)
+                    .get();
+                  const allusers = querySanp.docs.map((docSnap) =>
+                    docSnap.data()
+                  );
+
+                  console.log("sjashjajshjahsjahsj", allusers);
+                  if (
+                    allusers.length === 1 &&
+                    allusers[0].email === values.email
+                  ) {
+                    userLogin(values.email, "zaqxswcde1");
+                    console.log("CLient Logged In");
+                    AsyncStorage.setItem("user", JSON.stringify(userObject));
+                    if (
+                      res.data.success.role[0] === "client" &&
+                      res.data.success.user.active === 1
+                    ) {
+                      clientNavigationFunction();
+                    } else {
+                      navigation.replace("PricingAuth", {
+                        id: res.data.success.user.id,
+                      });
+                    }
+                  } else {
+                    try {
+                      const result = await auth.createUserWithEmailAndPassword(
+                        values.email,
+                        "zaqxswcde1"
+                      );
+                      console.log("jsjsjsjsjsjsjsjsj", result);
+                      console.log("Firesbase Account Created");
+                      db.collection("users")
+                        .doc(result.user.uid)
+                        .set({
+                          name: `${res.data.success.user.first_name} ${res.data.success.user.last_name}`,
+                          email: result.user.email,
+                          uid: result.user.uid,
+                          pic: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgSmojUgwjIB87c4Q0hLCAyl__oiTySWGWJUZtUNHlHjBALLzTsu_vMHYMaEwLts4QEoo&usqp=CAU",
+                          status: "online",
+                        });
+                      // navigation.replace("HomeScreen");
+                      // alert("Success");
+                      AsyncStorage.setItem("user", JSON.stringify(userObject));
+                      if (
+                        res.data.success.role[0] === "client" &&
+                        res.data.success.user.active === 1
+                      ) {
+                        clientNavigationFunction();
+                      } else {
+                        navigation.replace("PricingAuth", {
+                          id: res.data.success.user.id,
+                        });
+                      }
+                    } catch (err) {
+                      alert(err);
+                    }
+                  }
                 })
                 .catch((error) => {
                   // setIsLoading(false); // For hiding loader

@@ -18,14 +18,37 @@ import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
-function WeekNutritionPlanCard({ title, description, route, id, screen }) {
+function WeekNutritionPlanCard({
+  title,
+  description,
+  route,
+  id,
+  screen,
+  planTemplateId,
+  groupId,
+  planTemplateName,
+  weekNumber,
+}) {
   const navigation = useNavigation();
 
   return (
     <TouchableOpacity
       onPress={() => {
         if (screen === "WeekNutritionPlanCard") {
-          navigation.navigate("TopBarScreenNutrition", { id: id });
+          navigation.navigate("TopBarScreenNutrition", {
+            id: id,
+            planTemplateId: planTemplateId,
+            weekNumber: weekNumber,
+          });
+        }
+        if (planTemplateId && groupId && planTemplateName) {
+          navigation.navigate("AssignWorkoutScreen", {
+            planTemplateId: planTemplateId,
+            groupId: groupId,
+            planTemplateName: planTemplateName,
+            weekId: id,
+            weekName: title,
+          });
         }
         if (screen === "WeeklyPlanTemplateScreen") {
           navigation.navigate("TopBarScreenWeeklyPlanTemplate", { id: id });

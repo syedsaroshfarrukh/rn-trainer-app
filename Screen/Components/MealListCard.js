@@ -28,6 +28,7 @@ const MealListCard = ({
   calories,
   RefreshList,
   pivot,
+  hide,
 }) => {
   const navigation = useNavigation();
   return (
@@ -77,62 +78,66 @@ const MealListCard = ({
         </View>
       </View>
       <View style={styles.secondColumn}></View>
-      <View style={styles.thirdColumn}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              Alert.alert(
-                "Delete",
-                `Do you want to delete ${title} ?`,
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => {
-                      return null;
-                    },
-                  },
-                  {
-                    text: "Delete",
-                    onPress: () => {
-                      console.log(pivot.id);
-                      console.log(pivot.type_id);
-                      nutritionPlanService
-                        .deleteFoodFromMeal(pivot.type_id, pivot.id)
-                        .then((res) => {
-                          // setIsLoading(false);
-                          // dropDownAlertRef.alertWithType(
-                          //   "success",
-                          //   "User Registered Successfully"
-                          // );
-                          RefreshList(pivot.id);
-                          RefreshList("");
-                        })
-                        .catch((error) => {
-                          // setIsLoading(false); // For hiding loader
-                          // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
-                          console.log(error);
-                        });
-                    },
-                  },
-                ],
-                { cancelable: false }
-              );
+      {hide === true ? (
+        <View></View>
+      ) : (
+        <View style={styles.thirdColumn}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <SvgUri
-              source={require("../../Image/delete-new.svg")}
-              height={20}
-              width={30}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  "Delete",
+                  `Do you want to delete ${title} ?`,
+                  [
+                    {
+                      text: "Cancel",
+                      onPress: () => {
+                        return null;
+                      },
+                    },
+                    {
+                      text: "Delete",
+                      onPress: () => {
+                        console.log(pivot.id);
+                        console.log(pivot.type_id);
+                        nutritionPlanService
+                          .deleteFoodFromMeal(pivot.type_id, pivot.id)
+                          .then((res) => {
+                            // setIsLoading(false);
+                            // dropDownAlertRef.alertWithType(
+                            //   "success",
+                            //   "User Registered Successfully"
+                            // );
+                            RefreshList(pivot.id);
+                            RefreshList("");
+                          })
+                          .catch((error) => {
+                            // setIsLoading(false); // For hiding loader
+                            // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+                            console.log(error);
+                          });
+                      },
+                    },
+                  ],
+                  { cancelable: false }
+                );
+              }}
+            >
+              <SvgUri
+                source={require("../../Image/delete-new.svg")}
+                height={20}
+                width={30}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
     </LinearGradient>
   );
 };

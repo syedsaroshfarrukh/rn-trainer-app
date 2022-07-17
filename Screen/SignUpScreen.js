@@ -2,7 +2,7 @@
 // https://aboutreact.com/react-native-login-and-signup/
 
 // Import React and Component
-import React, { useState, createRef } from "react";
+import React, { useState, createRef, useRef } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -18,8 +18,12 @@ import {
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import { Formik } from "formik";
 import Loader from "./Components/Loader";
+import signupValidationsSchema from "../validations/signupValidationsSchema";
+import clientService from "../services/clientService";
+import DropdownAlert from "react-native-dropdownalert";
+import { auth, db } from "../firebase";
 
 const SignUpScreen = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState("");
@@ -27,134 +31,235 @@ const SignUpScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState("");
 
-  const passwordInputRef = createRef();
+  let dropDownAlertRef = useRef();
 
-  const handleSubmitPress = () => {
-    setErrortext("");
-    if (!userEmail) {
-      alert("Please fill Email");
-      return;
-    }
-    if (!userPassword) {
-      alert("Please fill Password");
-      return;
-    }
-    setLoading(true);
-    let dataToSend = { email: userEmail, password: userPassword };
-    let formBody = [];
-    for (let key in dataToSend) {
-      let encodedKey = encodeURIComponent(key);
-      let encodedValue = encodeURIComponent(dataToSend[key]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-
-    fetch("http://localhost:3000/api/user/login", {
-      method: "POST",
-      body: formBody,
-      headers: {
-        //Header Defination
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        //Hide Loader
-        setLoading(false);
-        console.log(responseJson);
-        // If server response message same as Data Matched
-        if (responseJson.status === "success") {
-          AsyncStorage.setItem("user_id", responseJson.data.email);
-          console.log(responseJson.data.email);
-          navigation.replace("DrawerNavigationRoutes");
-        } else {
-          setErrortext(responseJson.msg);
-          console.log("Please check your email id or password");
-        }
-      })
-      .catch((error) => {
-        //Hide Loader
-        setLoading(false);
-        console.error(error);
-      });
-  };
+  function clientNavigationFunction() {
+    navigation.replace("PricingAuth");
+  }
 
   return (
-    <KeyboardAwareScrollView
-      contentContainerStyle={styles.mainBody}
-      resetScrollToCoords={{ x: 0, y: 0 }}
+    <Formik
+      initialValues={{
+        fName: "",
+        lName: "",
+        email: "",
+        password: "",
+      }}
+      onSubmit={(values) => {
+        setLoading(true);
+        clientService
+          .registerClient({
+            first_name: values.fName,
+            last_name: values.lName,
+            email: values.email,
+            password: values.password,
+            confirm_password: values.password,
+          })
+          .then(async (res) => {
+            console.log("Response", res.data);
+            let userObject = {
+              id: res.data.success.user.id,
+              role: res.data.success.role[0],
+              firstName: res.data.success.user.first_name,
+              lastName: res.data.success.user.last_name,
+              email: res.data.success.user.email,
+              token: res.data.success.token,
+            };
+            dropDownAlertRef.alertWithType("success", "Client Created");
+            AsyncStorage.setItem("user", JSON.stringify(userObject));
+
+            const querySanp = await db
+              .collection("users")
+              .where("email", "==", values.email)
+              .get();
+            const allusers = querySanp.docs.map((docSnap) => docSnap.data());
+            if (allusers.length === 0) {
+              const result = await auth.createUserWithEmailAndPassword(
+                values.email,
+                "zaqxswcde1"
+              );
+              console.log("jsjsjsjsjsjsjsjsj", result);
+              console.log("Firesbase Account Created");
+              db.collection("users")
+                .doc(result.user.uid)
+                .set({
+                  name: `${res.data.success.user.first_name} ${res.data.success.user.last_name}`,
+                  email: result.user.email,
+                  uid: result.user.uid,
+                  pic: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgSmojUgwjIB87c4Q0hLCAyl__oiTySWGWJUZtUNHlHjBALLzTsu_vMHYMaEwLts4QEoo&usqp=CAU",
+                  status: "online",
+                });
+            }
+            if (res.data.success.role[0] === "client") {
+              navigation.replace("PricingAuth", {
+                id: res.data.success.user.id,
+              });
+            }
+
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log("Error", err);
+            dropDownAlertRef.alertWithType("error", "Email Already Exsists");
+            setLoading(false);
+          });
+      }}
+      validationSchema={signupValidationsSchema}
     >
-      <View
-        style={{
-          alignItems: "center",
-          flex: 2,
-          marginTop: 50,
-          justifyContent: "center",
-        }}
-      >
-        <Image
-          source={require("../Image/logo-small.png")}
-          style={{ height: "45%", width: "45%", top: 15 }}
-        />
-      </View>
-      <View style={styles.cardBody}>
-        <Text style={styles.textCardBodyHeader}>Create Your Account</Text>
-        <View style={{ flex: 1 }}>
-          <TextInput
-            style={styles.inputStyle}
-            underlineColorAndroid="#f000"
-            placeholder="Full Name"
-            placeholderTextColor="#8b9cb5"
-            autoCapitalize="sentences"
-            returnKeyType="next"
-            // // onSubmitEditing={() =>
-            // //   emailInputRef.current && emailInputRef.current.focus()
-            // // }
-            // blurOnSubmit={false}
-          />
-          <TextInput
-            style={styles.inputStyle}
-            underlineColorAndroid="#f000"
-            placeholder="Email"
-            placeholderTextColor="#8b9cb5"
-            autoCapitalize="sentences"
-            returnKeyType="next"
-            // // onSubmitEditing={() =>
-            // //   emailInputRef.current && emailInputRef.current.focus()
-            // // }
-            // blurOnSubmit={false}
-          />
-          <TextInput
-            style={styles.inputStyle}
-            underlineColorAndroid="#f000"
-            placeholder="Password"
-            placeholderTextColor="#8b9cb5"
-            autoCapitalize="sentences"
-            returnKeyType="next"
-            secureTextEntry={true}
-            // // onSubmitEditing={() =>
-            // //   emailInputRef.current && emailInputRef.current.focus()
-            // // }
-            // blurOnSubmit={false}
-          />
-          <TouchableOpacity
-            style={styles.buttonStyle}
-            activeOpacity={0.5}
-            onPress={() => navigation.navigate("RegisterScreen")}
+      {({
+        handleChange,
+        handleBlur,
+        handleSubmit,
+        values,
+        errors,
+        isValid,
+      }) => (
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.mainBody}
+          resetScrollToCoords={{ x: 0, y: 0 }}
+        >
+          <Loader loading={loading} />
+          <View
+            style={{
+              alignItems: "center",
+              flex: 2,
+              marginTop: 50,
+              justifyContent: "center",
+            }}
           >
-            <Text style={styles.buttonTextStyle}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.belowCardArea}>
-        <View style={styles.belowCardAreaView}>
-          <Text style={styles.belowCardText}> Already have an account ? </Text>
-          <TouchableOpacity>
-            <Text style={{ fontWeight: "400" }}>Click Here To Login</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAwareScrollView>
+            <Image
+              source={require("../Image/logo-small.png")}
+              style={{ height: "70%", width: "45%", top: 15 }}
+            />
+          </View>
+          <View style={styles.cardBody}>
+            <Text style={styles.textCardBodyHeader}>Create Your Account</Text>
+            <View style={{ flex: 1 }}>
+              <TextInput
+                style={styles.inputStyle}
+                underlineColorAndroid="#f000"
+                placeholder="First Name"
+                placeholderTextColor="#8b9cb5"
+                autoCapitalize="sentences"
+                returnKeyType="next"
+                onChangeText={handleChange("fName")}
+                onBlur={handleBlur("fName")}
+                value={values.fName}
+              />
+              {errors.fName && (
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "red",
+                    marginLeft: "8%",
+                    marginTop: "-2%",
+                  }}
+                >
+                  {errors.fName}
+                </Text>
+              )}
+              <TextInput
+                style={styles.inputStyle}
+                underlineColorAndroid="#f000"
+                placeholder="Last Name"
+                placeholderTextColor="#8b9cb5"
+                autoCapitalize="sentences"
+                returnKeyType="next"
+                onChangeText={handleChange("lName")}
+                onBlur={handleBlur("lName")}
+                value={values.lName}
+              />
+              {errors.lName && (
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "red",
+                    marginLeft: "8%",
+                    marginTop: "-2%",
+                  }}
+                >
+                  {errors.lName}
+                </Text>
+              )}
+              <TextInput
+                style={styles.inputStyle}
+                underlineColorAndroid="#f000"
+                placeholder="Email"
+                placeholderTextColor="#8b9cb5"
+                autoCapitalize="none"
+                returnKeyType="next"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+                value={values.email}
+              />
+              {errors.email && (
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "red",
+                    marginLeft: "8%",
+                    marginTop: "-2%",
+                  }}
+                >
+                  {errors.email}
+                </Text>
+              )}
+              <TextInput
+                style={styles.inputStyle}
+                underlineColorAndroid="#f000"
+                placeholder="Password"
+                placeholderTextColor="#8b9cb5"
+                autoCapitalize="sentences"
+                returnKeyType="next"
+                secureTextEntry={true}
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+                value={values.password}
+              />
+              {errors.password && (
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: "red",
+                    marginLeft: "8%",
+                    marginTop: "-2%",
+                  }}
+                >
+                  {errors.password}
+                </Text>
+              )}
+              <TouchableOpacity
+                style={styles.buttonStyle}
+                activeOpacity={0.5}
+                onPress={handleSubmit}
+              >
+                <Text style={styles.buttonTextStyle}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.belowCardArea}>
+            <View style={styles.belowCardAreaView}>
+              <Text style={styles.belowCardText}>
+                {" "}
+                Already have an account ?{" "}
+              </Text>
+              <TouchableOpacity>
+                <Text style={{ fontWeight: "400" }}>Click Here To Login</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <DropdownAlert
+            updateStatusBar={false}
+            defaultContainer={{ padding: 15, paddingTop: 45 }}
+            ref={(ref) => {
+              if (ref) {
+                dropDownAlertRef = ref;
+              }
+            }}
+          />
+        </KeyboardAwareScrollView>
+      )}
+    </Formik>
   );
 };
 export default SignUpScreen;
@@ -178,7 +283,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cardBody: {
-    flex: 3,
+    flex: 4.5,
     backgroundColor: "#DEE3E5",
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,

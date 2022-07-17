@@ -43,7 +43,7 @@ const CustomSidebarMenu = (props) => {
       let user = await AsyncStorage.getItem("user");
       let parsed = JSON.parse(user);
       setUserDetails(parsed);
-      console.log(parsed);
+      console.log("parsessss", parsed.profileImage);
     }
 
     AsyncStorageDataLoad();
@@ -53,11 +53,12 @@ const CustomSidebarMenu = (props) => {
     <View style={stylesSidebar.sideMenuContainer}>
       <View style={stylesSidebar.profileHeader}>
         <View style={{ flexDirection: "row" }}>
-          <View style={stylesSidebar.profileHeaderPicCircle}>
-            <Text style={{ fontSize: 25, color: "#307ecc" }}>
-              {"About React".charAt(0)}
-            </Text>
-          </View>
+          <Image
+            source={{
+              uri: `http://trainer.asds.com.pk/public/${userDetails.profileImage}`,
+            }}
+            style={{ height: 56, width: 56, borderRadius: 60 / 2 }}
+          />
           <View
             style={{
               marginTop: 10,
@@ -228,7 +229,7 @@ const stylesSidebar = StyleSheet.create({
     height: 56,
     borderRadius: 60 / 2,
     color: "black",
-    backgroundColor: "grey",
+    // backgroundColor: "grey",
     textAlign: "center",
     justifyContent: "center",
     alignItems: "center",

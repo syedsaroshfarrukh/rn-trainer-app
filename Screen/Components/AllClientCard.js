@@ -4,50 +4,51 @@ import { LinearGradient } from "expo-linear-gradient";
 import { deg } from "react-native-linear-gradient-degree";
 import SvgUri from "expo-svg-uri";
 import clientService from "../../services/clientService";
+import TrainerClientsMenu from "../../Screen/Components/TrainerClientsMenu";
 
 const { width, height } = Dimensions.get("window");
 
 const AllClientCard = ({ Name, id }) => {
   const [client, setClient] = useState({});
 
-  useEffect(() => {
+  useEffect(() => {}, []);
+
+  const onShare = async (id) => {
     clientService
       .getClientInvite(id)
-      .then((res) => {
+      .then(async (res) => {
         setClient(res.data.details);
+        try {
+          const result = await Share.share({
+            message: `Hi ${res.data.details.user.first_name},
+
+I have created a new TrainerLux Fitness app account for you. TrainerLux Fitness app would let us collaborate and help you meet your fitness goals faster.
+
+Once you have downloaded the app, use the below email and password to login to the app:
+Email ==> ${res.data.details.user.email}
+Password ==> ${res.data.details.password}
+
+If you have any questions, please let me know.
+Thanks, have a lovely day.
+                    `,
+          });
+          if (result.action === Share.sharedAction) {
+            if (result.activityType) {
+              // shared with activity type of result.activityType
+            } else {
+              // shared
+            }
+          } else if (result.action === Share.dismissedAction) {
+            // dismissed
+          }
+        } catch (error) {
+          alert(error.message);
+        }
       })
       .catch((error) => {
         console.log("Error", error);
+        console.log("Error", id);
       });
-  }, []);
-
-  const onShare = async ({ name, email, password }) => {
-    try {
-      const result = await Share.share({
-        message: `Hi ${name},
-           
-I have created a new TrainerLux Fitness app account for you. TrainerLux Fitness app would let us collaborate and help you meet your fitness goals faster.
-    
-Once you have downloaded the app, use the below email and password to login to the app:
-Email ==> ${email}
-Password ==> ${password}
-    
-If you have any questions, please let me know.
-Thanks, have a lovely day.
-            `,
-      });
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          // shared with activity type of result.activityType
-        } else {
-          // shared
-        }
-      } else if (result.action === Share.dismissedAction) {
-        // dismissed
-      }
-    } catch (error) {
-      alert(error.message);
-    }
   };
 
   return (
@@ -99,7 +100,7 @@ Thanks, have a lovely day.
             </Text>
           </View>
           <View style={styles.rowFour}>
-            <SvgUri
+            {/* <SvgUri
               source={require("../../Image/order-new.svg")}
               style={{ height: 20, width: 20 }}
             />
@@ -111,37 +112,28 @@ Thanks, have a lovely day.
                 top: "0.7%",
                 left: "50%",
               }}
-            />
+            /> */}
+            <Text
+              style={{ fontSize: 12, color: "#42B825" }}
+              onPress={async () => {
+                await onShare(id);
+                // console.log({
+                //   name: client.user.first_name,
+                //   email: client.user.email,
+                //   password: client.password,
+                // });
+              }}
+            >
+              Send Invite Link
+            </Text>
           </View>
         </View>
       </View>
       <View style={styles.thirdColumn}>
         <View>
-          <SvgUri
-            source={require("../../Image/dots-button.svg")}
-            style={{
-              height: 16,
-              width: 15.16,
-              top: "0.7%",
-              left: "30%",
-              top: "8%",
-            }}
-          />
+          <TrainerClientsMenu id={id} />
         </View>
-        <View style={{ top: "10%", right: "2%" }}>
-          <Text
-            style={{ fontSize: 12, color: "#42B825" }}
-            onPress={async () => {
-              await onShare({
-                name: client.user.first_name,
-                email: client.user.email,
-                password: client.password,
-              });
-            }}
-          >
-            Send Invite Link
-          </Text>
-        </View>
+        <View style={{ right: "2%" }}></View>
       </View>
     </LinearGradient>
   );

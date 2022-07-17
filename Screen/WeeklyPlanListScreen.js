@@ -23,6 +23,13 @@ const WeeklyPlanListScreen = (props) => {
     setRefrestState(newValue);
   };
 
+  const planTemplateId =
+    props &&
+    props.route &&
+    props.route.params &&
+    props.route.params.planTemplateId &&
+    props.route.params.planTemplateId;
+
   useEffect(() => {
     setLoading(true);
     nutritionPlanService
@@ -46,7 +53,7 @@ const WeeklyPlanListScreen = (props) => {
       <Loader loading={loading} />
       <View style={styles.firstRow}>
         <ScrollView>
-          {weeklyPlanList.length > 1 ? (
+          {weeklyPlanList.length >= 1 ? (
             weeklyPlanList.map((item, key) => {
               return (
                 <WeekNutritionPlanCard
@@ -54,6 +61,8 @@ const WeeklyPlanListScreen = (props) => {
                   title={`Week ${item.week}`}
                   id={item.id}
                   screen={"WeekNutritionPlanCard"}
+                  planTemplateId={planTemplateId}
+                  weekNumber={item.week}
                 />
               );
             })

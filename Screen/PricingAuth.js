@@ -11,35 +11,52 @@ import {
   KeyboardAvoidingView,
   FlatList,
 } from "react-native";
-import React, { Component } from "react";
+import React, { useState } from "react";
 import SvgUri from "expo-svg-uri";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 
 const DATA = [
   {
     id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-    title: "Classic Plan",
-    price: "100",
-    planType: "Current Plan",
+    title: "Trainerlux Fitness Standard",
+    price: "55",
+    planType: "Moderate Seller",
   },
   {
     id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-    title: "Bussiness Plan",
-    price: "200",
-    planType: "Upgrade",
+    title: "Trainerlux Fitness Premium",
+    price: "75",
+    planType: "Best Seller",
   },
   {
     id: "58694a0f-3da1-471f-bd96-145571e29d72",
-    title: "Enterprise Plan",
-    price: "300",
+    title: "Trainerlux Fitness Plus+",
+    price: "100",
     planType: "Upgrade",
   },
 ];
 
-const Item = ({ title, price, planType }) => (
-  <View
+const Item = ({
+  title,
+  price,
+  planType,
+  setter,
+  active,
+  dealSetter,
+  clientId,
+}) => (
+  <TouchableOpacity
     style={{
       ...styles.item,
-      backgroundColor: title === "Classic Plan" ? "#BDC8FF" : "#FFFFFF",
+      backgroundColor: title === active ? "#BDC8FF" : "#FFFFFF",
+    }}
+    onPress={() => {
+      setter(title);
+      dealSetter({
+        dealName: title,
+        dealPrice: price,
+        clientId: clientId,
+      });
     }}
   >
     <Text style={styles.title}>{title}</Text>
@@ -53,19 +70,41 @@ const Item = ({ title, price, planType }) => (
       <View
         style={{
           ...styles.cardBodyButton,
-          backgroundColor: planType === "Current Plan" ? "#FFFFFF" : "#F3B007",
+          backgroundColor: title === active ? "#FFFFFF" : "#F3B007",
         }}
       >
         <Text>{planType}</Text>
       </View>
     </View>
-  </View>
+  </TouchableOpacity>
 );
 
-const PricingAuth = ({ navigation }) => {
+const PricingAuth = (props) => {
+  const [active, setActive] = useState();
+  const [deal, setDealDetail] = useState();
+
+  const navigation = useNavigation();
+
+  console.log("Propssssss", props?.route?.params?.id);
+  const activeFunction = (data) => {
+    setActive(data);
+  };
+  const dealFunction = (data) => {
+    setDealDetail(data);
+  };
+
   {
     const renderItem = ({ item }) => (
-      <Item title={item.title} price={item.price} planType={item.planType} />
+      <Item
+        title={item.title}
+        price={item.price}
+        planType={item.planType}
+        setter={activeFunction}
+        active={active}
+        deal={deal}
+        dealSetter={dealFunction}
+        clientId={props?.route?.params?.id}
+      />
     );
     return (
       <View style={styles.mainBody}>
@@ -116,7 +155,9 @@ const PricingAuth = ({ navigation }) => {
               activeOpacity={0.3}
               style={styles.buttonStyle}
               onPress={() =>
-                navigation.navigate("DrawerNavigationRoutesClient")
+                navigation.navigate("SelectPaymentMethodScreen", {
+                  dealDetails: deal,
+                })
               }
             >
               <Text style={styles.buttonTextStyle}>Continue</Text>
@@ -169,7 +210,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   title: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "400",
   },
   priceView: {

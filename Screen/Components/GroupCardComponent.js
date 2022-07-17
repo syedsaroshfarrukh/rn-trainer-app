@@ -57,7 +57,12 @@ const GroupCardComponent = ({ title, id, RefreshList }) => {
                 Groups News Feed
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonFour}>
+            <TouchableOpacity
+              style={styles.buttonFour}
+              onPress={() =>
+                navigation.navigate("AssignWorkoutScreen", { groupId: id })
+              }
+            >
               <Text style={{ fontSize: 12, fontWeight: "400" }}>
                 Assign Workout Plan
               </Text>

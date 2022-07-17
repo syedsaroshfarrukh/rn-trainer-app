@@ -74,7 +74,8 @@ const DayPlanWorkoutTabsComponent = ({ id, Refresh }) => {
         <View>
           <TouchableOpacity
             style={{
-              padding: "5%",
+              height: width * 0.08,
+              width: width * 0.3,
               backgroundColor: "#42B825",
               borderRadius: 4,
               borderColor: "#CBCBCB",
@@ -114,7 +115,8 @@ const DayPlanWorkoutTabsComponent = ({ id, Refresh }) => {
         <View>
           <TouchableOpacity
             style={{
-              padding: "5%",
+              height: width * 0.08,
+              width: width * 0.3,
               backgroundColor: "#42B825",
               borderRadius: 4,
               borderColor: "#CBCBCB",
@@ -148,7 +150,8 @@ const DayPlanWorkoutTabsComponent = ({ id, Refresh }) => {
         <View>
           <TouchableOpacity
             style={{
-              padding: "5%",
+              height: width * 0.08,
+              width: width * 0.3,
               backgroundColor: "#42B825",
               borderRadius: 4,
               borderColor: "#CBCBCB",

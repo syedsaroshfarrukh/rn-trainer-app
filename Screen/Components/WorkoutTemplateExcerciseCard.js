@@ -28,6 +28,7 @@ const WorkoutTemplateExcerciseCard = ({
   RefreshList,
   planTemplate,
   planTemplateId,
+  hide,
 }) => {
   console.log(pivot === null ? "Null" : pivot);
   const navigation = useNavigation();
@@ -79,110 +80,114 @@ const WorkoutTemplateExcerciseCard = ({
           </View>
         </View>
       </View>
-      <View style={styles.thirdColumn}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              Alert.alert(
-                "Delete",
-                `Do you want to cancel this ${title} ?`,
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => {
-                      return null;
-                    },
-                  },
-                  {
-                    text: "Delete",
-                    onPress: () => {
-                      console.log("---pivot---", pivot);
-                      console.log(workoutTemplateId);
-                      if (planTemplate === "planTemplate") {
-                        planTemplateService
-                          .deleteMainExcerciseCard(pivot.type_id)
-                          .then((res) => {
-                            // setIsLoading(false);
-                            // dropDownAlertRef.alertWithType(
-                            //   "success",
-                            //   "User Registered Successfully"
-                            // );
-                            RefreshList(pivot.id);
-                            RefreshList("");
-                          })
-                          .catch((error) => {
-                            // setIsLoading(false); // For hiding loader
-                            // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
-                            console.log(error);
-                          });
-                      } else {
-                        workoutService
-                          .deleteExcerciseMainCard(pivot.type_id)
-                          .then((res) => {
-                            // setIsLoading(false);
-                            // dropDownAlertRef.alertWithType(
-                            //   "success",
-                            //   "User Registered Successfully"
-                            // );
-                            RefreshList(pivot.id);
-                            RefreshList("");
-                          })
-                          .catch((error) => {
-                            // setIsLoading(false); // For hiding loader
-                            // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
-                            console.log(error);
-                          });
-                      }
-                    },
-                  },
-                ],
-                { cancelable: false }
-              );
+      {hide === true ? (
+        <View></View>
+      ) : (
+        <View style={styles.thirdColumn}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <SvgUri
-              source={require("../../Image/dustbin.svg")}
-              style={{
-                height: 20,
-                width: 16.25,
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert(
+                  "Delete",
+                  `Do you want to cancel this ${title} ?`,
+                  [
+                    {
+                      text: "Cancel",
+                      onPress: () => {
+                        return null;
+                      },
+                    },
+                    {
+                      text: "Delete",
+                      onPress: () => {
+                        console.log("---pivot---", pivot);
+                        console.log(workoutTemplateId);
+                        if (planTemplate === "planTemplate") {
+                          planTemplateService
+                            .deleteMainExcerciseCard(pivot.type_id)
+                            .then((res) => {
+                              // setIsLoading(false);
+                              // dropDownAlertRef.alertWithType(
+                              //   "success",
+                              //   "User Registered Successfully"
+                              // );
+                              RefreshList(pivot.id);
+                              RefreshList("");
+                            })
+                            .catch((error) => {
+                              // setIsLoading(false); // For hiding loader
+                              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+                              console.log(error);
+                            });
+                        } else {
+                          workoutService
+                            .deleteExcerciseMainCard(pivot.type_id)
+                            .then((res) => {
+                              // setIsLoading(false);
+                              // dropDownAlertRef.alertWithType(
+                              //   "success",
+                              //   "User Registered Successfully"
+                              // );
+                              RefreshList(pivot.id);
+                              RefreshList("");
+                            })
+                            .catch((error) => {
+                              // setIsLoading(false); // For hiding loader
+                              // dropDownAlertRef.alertWithType("error", "Something Went Wrong");
+                              console.log(error);
+                            });
+                        }
+                      },
+                    },
+                  ],
+                  { cancelable: false }
+                );
               }}
-            />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("SetsInfoScreen", {
-                title: title,
-                type_id: pivot.type_id,
-                id: pivot.id,
-                workoutTemplateId: workoutTemplateId,
-                planTemplateId: planTemplateId,
-              })
-            }
+            >
+              <SvgUri
+                source={require("../../Image/dustbin.svg")}
+                style={{
+                  height: 20,
+                  width: 16.25,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            <SvgUri
-              source={require("../../Image/pencil.svg")}
-              style={{
-                height: 17.77,
-                width: 20,
-              }}
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("SetsInfoScreen", {
+                  title: title,
+                  type_id: pivot.type_id,
+                  id: pivot.id,
+                  workoutTemplateId: workoutTemplateId,
+                  planTemplateId: planTemplateId,
+                })
+              }
+            >
+              <SvgUri
+                source={require("../../Image/pencil.svg")}
+                style={{
+                  height: 17.77,
+                  width: 20,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
     </LinearGradient>
   );
 };

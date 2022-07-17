@@ -34,8 +34,10 @@ const SettingTrainerScreen = () => {
     <View style={styles.container}>
       <View style={styles.firstRow}>
         <Image
-          source={require("../Image/BoyProfile.png")}
-          style={{ height: 101, width: 101 }}
+          source={{
+            uri: `http://trainer.asds.com.pk/public/${userInfo.profileImage}`,
+          }}
+          style={{ height: 101, width: 101, borderRadius: 60 / 1 }}
         />
         <Text style={styles.name}>
           {userInfo.firstName} {userInfo.lastName}

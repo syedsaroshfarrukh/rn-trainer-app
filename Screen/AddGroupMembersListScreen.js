@@ -72,7 +72,7 @@ const AddGroupMembersListScreen = (props) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <Loader loading={loading} />
       <ScrollView style={{ flex: 0.9 }}>
-        {uniqueMembers.length > 1 ? (
+        {uniqueMembers.length >= 1 ? (
           uniqueMembers.map((item, key) => {
             return (
               <GroupMemberCard

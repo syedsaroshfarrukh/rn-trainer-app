@@ -27,7 +27,7 @@ const TopBarScreenNutrition = (props) => {
   };
 
   useEffect(() => {
-    console.log(props);
+    console.log("skjaskjakjs", props);
     setLoading(true);
     nutritionPlanService
       .getDailyNutrition(props.route.params.id)

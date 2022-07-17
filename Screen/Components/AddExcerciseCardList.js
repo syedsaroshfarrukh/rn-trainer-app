@@ -31,6 +31,7 @@ function AddExcerciseCardList({
   addExcerciseToPlanTemplate,
   planTemplateSuperSetWorkoutId,
   groupId,
+  ExcerciseArray,
 }) {
   const navigation = useNavigation();
 
@@ -125,6 +126,12 @@ function AddExcerciseCardList({
           navigation.navigate("DrawerNavigationRoutes", {
             id: groupId,
             title: title,
+          });
+        }
+        if (ExcerciseArray) {
+          navigation.navigate("LogTodayWorkout", {
+            title: title,
+            id: id,
           });
         }
       }}
